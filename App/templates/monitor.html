@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Monitor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: #f5f5f5;
+      color: #111;
+      font-family: 'Work Sans', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-bottom: 1px solid #475569;
+    }
+    .logo img { height: 40px; }
+    .save-btn {
+      background: #6366f1;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.4); }
+
+    /* Dashboard */
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 20px;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    /* Status Panel */
+    .status-panel {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex: 0 0 auto;
+    }
+    .status-card {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #dee2e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .status-card:hover { transform: translateY(-5px); }
+
+    .status-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e0e7ff;
+      color: #6366f1;
+    }
+    .status-title { font-size: 14px; color: #6b7280; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+    .status-value { font-size: 28px; font-weight: 700; margin: 2px 0; }
+    .job-label { color: #4f46e5; }
+    .total-count { color: #111; }
+    .ok-count { color: #16a34a; }
+    .notok-count { color: #dc2626; }
+
+    /* Monitor Container */
+    .monitor-container {
+      flex: 1 1 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    #monitorImage { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+    .last-update {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: #f5f5f5;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pulse {
+      width: 10px; height: 10px; border-radius: 50%; background: #16a34a;
+      animation: pulse-animation 2s infinite;
+    }
+    @keyframes pulse-animation {
+      0% { box-shadow: 0 0 0 0 rgba(22,163,52,0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(22,163,52,0); }
+      100% { box-shadow: 0 0 0 0 rgba(22,163,52,0); }
+    }
+
+    @media (max-width: 768px) {
+      .status-panel { flex-direction: column; gap: 12px; }
+      .status-card { flex: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="{% static 'img/erlwhite.png' %}" alt="ERL Vision Logo">
+    </div>
+   <button class="save-btn" onclick="window.location.href='{% url 'home' %}'">
+    <i class="fas fa-desktop"></i> config Dashboard
+  </button>
+  </nav>
+
+  <div class="dashboard">
+    <div class="status-panel">
+      <div class="status-card">
+        <div class="status-icon"><i class="fas fa-barcode"></i></div>
+        <div class="status-title">Component</div>
+        <div class="status-value job-label" id="comp">--</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon"><i class="fas fa-layer-group"></i></div>
+        <div class="status-title">Job Count</div>
+        <div class="status-value total-count" id="job">--</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="status-title">OK Count</div>
+        <div class="status-value ok-count" id="ok">--</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon"><i class="fas fa-times-circle"></i></div>
+        <div class="status-title">Not OK Count</div>
+        <div class="status-value notok-count" id="fail">--</div>
+      </div>
+    </div>
+
+    <div class="monitor-container">
+      <img id="monitorImage" src="{% static 'captured/two/marked_outliers.png' %}" alt="Live Image">
+      <div class="last-update">  
+        <span class="pulse"></span>Last updated: <span id="updateTime">Just now</span> | <span id="clock">Time: --</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function refreshImage() {
+      const monitorImg = document.getElementById("monitorImage");
+      monitorImg.src = "{% static 'captured/two/marked_outliers.png' %}?t=" + new Date().getTime();
+    }
+
+    function refreshStats() {
+      fetch("/api/job_summary/")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("comp").innerText = "Component: " + data.job_summary.Component;
+          document.getElementById("job").innerText = "Job Count: " + data.job_summary.JobCount;
+          document.getElementById("ok").innerText =  "OK: " + data.job_summary.OK;
+          document.getElementById("fail").innerText = "FAIL: " + data.job_summary.FAIL;
+          document.getElementById("updateTime").innerText = "Just now";
+        });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const formatted = now.toLocaleString();
+      document.getElementById("clock").innerText = "Time: " + formatted;
+    }
+
+    setInterval(refreshImage, 500);
+    setInterval(refreshStats, 500);
+    setInterval(updateClock, 1000);
+
+    // initial run
+    refreshStats();
+    updateClock();
+  </script>
+</body>
+</html>

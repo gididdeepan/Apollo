@@ -1,0 +1,15 @@
+{
+    "minrange": 120,
+    "maxrange": 125,
+    "Region_1_Tolernce": 1,
+    "Region_2_Tolernce": 2,
+    "Region_3_Tolernce": 1,
+    "Region_4_Tolernce": 1,
+    "Region_5_Tolernce": 2,
+    "Region_6_Tolernce": 1,
+    "Region_7_Tolernce": 1,
+    "Region_8_Tolernce": 2,
+    "Region_9_Tolernce": 1,
+    "Region_10_Tolernce": 1,
+    "filter": 0.5
+}

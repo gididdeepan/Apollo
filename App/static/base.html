@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet"> <!-- Google Font -->
+  <title>Apollo</title>
+  <link rel="stylesheet" href="./static/csss/vision.css"> <!-- Link to separate CSS file -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="./static/img/erlwhite.png" alt="Logo" class="logo-icon">
+      <span class="app-name">ERL Vision</span>
+    </div>
+  
+    <div class="menu">
+      {% comment %} <div class="dropdown">
+        <a href="#" class="nav-link"><i class="fas fa-folder"></i> File</a>
+        <div class="dropdown-content">
+          <a href="#" onclick="handleSource('live')"><i class="fas fa-broadcast-tower"></i> Live</a>
+          <a href="#" onclick="document.getElementById('uploadInput').click()"><i class="fas fa-upload"></i> External</a>
+        </div>
+      </div> {% endcomment %}
+  
+      <!-- Hidden file input for external upload -->
+      <button class="save-btn" onclick="saveImage()"><i class="fas fa-save"></i> Save</button>
+      <button class="save-btn" onclick="window.location.href='/monitor/'"><i class="fas fa-desktop"></i> Monitor</button>
+    </div>
+  </nav>
+  
+
+  <div class="rectangle-box_1">
+    <div class="row-box">
+      <div class="parameter">
+        <img src="./static/img/layers.png" alt="Icon" class="icon-image">
+        Parameter Editor
+        <select id="Setting" class="text-select4" onchange="toggleCardView()">
+          <option value="acu">Acquisition Setting</option>
+          <option value="use">Trigger Setting</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <!-- CARD VIEW 1: Acquisition Setting -->
+  <div class="card-row" id="card-acquisition">
+    <div class="card card-left">
+      <h4 class="section-title-top">Acquisition Control</h4>
+  
+      <div class="form-row">
+        <label for="Frameselect" class="label4">Acquisition Mode</label>
+        <select id="Frameselect" class="text-select1">
+          <option value="SingleFrame">SingleFrame</option>
+          <option value="Continuous">Continuous</option>
+        </select>
+        <label for="Stopmode" class="label">Acquisition Stop Mode</label>
+        <select id="Stopmode" class="text-select2">
+          <option value="Complete">Complete</option>
+          <option value="Immediate">Immediate</option>
+        </select>
+      </div>
+  
+      <h4 class="section-title-top2">Laser Profile Extraction</h4>
+      <div class="form-row">
+        <label class="label">Exposure Time</label>
+        <input type="number" id="Exposuretime" class="text-input1" value="100" placeholder="min: 12 max: 832">
+      </div>
+      <div class="form-row">
+        <label class="label">Detection Threshold</label>
+        <input type="text" id="Threshold" class="text-input2" value="10" placeholder="min: 12 max: 832">
+      </div>
+      <div class="form-row">
+        <label class="label">Advance</label>
+        <select id="Advance" class="text-select3">
+          <option value="Off">off</option>
+          <option value="PresetSoft">Preset Soft</option>
+          <option value="PresetMedium">Preset Meduim</option>
+          <option value="PresetAggressive">Preset Aggressive</option>
+        </select>
+      </div>
+  
+      <h4 class="section-title-top3">3D Image Format</h4>
+      <div class="form-row">
+        <label class="label">Height</label> 
+        <input type="text" id= "Profile" class="text-input3" value="2000" placeholder="min: 12 max: 832">
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- CARD VIEW 2: Trigger Setting -->
+  <div class="card-row" id="card-trigger" style="display: none;">
+    <div class="card card-left">
+      <h4 class="section-title-top">Free Runnig </h4>
+      <div class="form-row">
+        <label class="label">Timed Profile Rate (Hz)</label>
+        <input type="text" id ="Timedrate" class="text-input5" value="1024" placeholder="min: 12 max: 832">
+      </div>
+      <h4 class="section-title-top">Encoder </h4>
+     <div class="form-row">
+        <label class="label">Encoder Mode</label>
+        <label class="switch">
+          <input type="checkbox" id="EncoderModeToggle">
+          <span class="slider round"></span>
+          <span class="state-label off">OFF</span>
+        </label>
+      </div>
+          
+      <div class="form-row">
+        <label class="label">Encoder Resolution (mm/pulse)</label>
+        <input type="text" id ="Encoderresolution" class="text-input6" value="1000" placeholder="min: 12 max: 832">
+      </div>
+      <div class="form-row">
+        <label class="label">Pulse Per Profile </label>
+        <input type="text" id ="Pulseper" class="text-input7" value="1000" placeholder="min: 12 max: 832">
+      </div>
+      <div class="form-row">
+        <label class="label">Image Trigger</label>
+        <select id="ImageTriggerSelect" class="text-select6">
+          <option value="Positionup">Position Up</option>
+          <option value="Positiondown">Position Down</option>
+          <option value="Directionup">Direction Up</option>
+          <option value="Directiondown">Direction Down</option>
+          <option value="Motion">Motion</option>
+        </select>
+      </div>
+      <h4 class="section-title-top4">Image Triggering</h4>
+      <div class="form-row">
+        <label class="label">Trigger Mode</label>
+        <label class="switch3">
+          <input type="checkbox" id="TriggerModeToggle">
+          <span class="slider round"></span>
+          <span class="state-label off">OFF</span>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="label">Image Trigger</label>
+        <select id="External_trigger" class="text-select3">
+          <option value="RisingEdge">Rising Edge</option>
+          <option value="Levelhigh">Level High</option>
+        </select>
+      </div>
+      <!-- Add more settings if needed -->
+    </div>
+  </div>
+  <div class="card card-right">
+    <div id="loadingOverlay" style="
+      display: none;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+  ">
+      <img src="/static/pattern-18044.gif" alt="Loading..." style="width: 80px;">
+  </div>
+      <div id="imageContainer">
+        <img id="image" src="./static/captured/two/ERL_refl - Copy.png" alt="Zoomable" />
+      </div>
+  </div>
+{% comment %}  {% endcomment %}
+  <div class="card-row2">
+    <div class="card-container2">
+      <div class="rectangle-box_2">
+  <div class="config2">
+    <img src="./static/img/2d.png" alt="Icon"  class="icon-image"> Regions configuration 
+    {% comment %} <input type="checkbox" class="corner-checkbox" id="config2dCheckbox"> {% endcomment %}
+  </div>
+    
+        </div>
+       
+        <div class="card card-left_bottom">
+          <div class="scrollable-container">
+            <h4 class="section-title-top">Regions</h4>
+        
+            <!-- Component Selection -->
+            <div class="mb-1 inner-box">
+              <label for="component_select" class="label1">Select:</label>
+              <select id="component_select" class="component-dropdown" name="component_select">
+                <option value="job1">Component 1</option>
+                <option value="job2">Component 2</option>
+                <option value="job3">Component 3</option>
+              </select>
+            </div>
+        
+            <!-- Depth Config -->
+            <div class="form-row depth-config">
+              <label class="region-label">Min</label>
+              <input type="number" id="minrange"  value="101"
+              step="0.01" placeholder="12.0 to 832.0" class="config-input">
+              <label class="region-label">Max</label>
+              <input type="number" id="maxrange" value="103"
+              step="0.01" placeholder="12.0 to 832.0" class="config-input">
+              <label class="region-label">Tolerance</label>
+              <input type="number" id="filter"  value="0.5"
+              step="0.5" placeholder="0.5" class="config-input">
+            </div>
+        
+            <!-- Regions Table -->
+            <div class="regions-block">
+              <div class="regions-header">
+                <div>Region</div>
+                <div>Depth Value</div>
+                <div>Draw</div>
+                <div>Set</div>
+                <div>Edit</div>
+                <div>Delete</div>
+              </div>
+        
+              <!-- Regions 1–10 -->
+              <div class="region-row">
+                <span class="region-label">Reg-1</span>
+                <input type="number"  id="Region_1_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" id="editBtn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-2</span>
+                <input type="number" id="Region_2_Tolernce"  value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec2" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn2" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn2"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec2"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-3</span>
+                <input type="number"  id="Region_3_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec3" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn3" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn3"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec3"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-4</span>
+                <input type="number"  id="Region_4_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button" id="drawrec4" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button" id="setBtn4" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn4"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec4"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-5</span>
+                <input type="number" id="Region_5_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec5" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn5" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn5"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec5"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-6</span>
+                <input type="number" id="Region_6_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec6" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn6" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn6"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec6"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-7</span>
+                <input type="number" id="Region_7_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec7" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn7" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn7"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec7"><i class="fa-solid fa-trash"></i></button>
+              </div>
+        
+              <div class="region-row">
+                <span class="region-label">Reg-8</span>
+                <input type="number"  id="Region_8_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec8" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button  type="button"  id="setBtn8" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn8"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec8"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <div class="region-row">
+                <span class="region-label">Reg-9</span>
+                <input type="number"  id="Region_9_Tolernce"  value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec9" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn9" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn9"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec9"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <div class="region-row">
+                <span class="region-label">Reg-10</span>
+                <input type="number"  id="Region_10_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
+                <button type="button"  id="drawrec10" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
+                <button type="button"  id="setBtn10" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
+                <button class="btn orange" title="Edit" id="editBtn10"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn red" title="Delete" id="deleterec10"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    <!-- Right Card 1 with Rectangle -->
+    <div class="card-container2">
+      <div class="rectangle-box_3">
+        <div class="config3">
+          <img src="./static/img/model-cube-arrows.png" alt="Icon"  class="icon-image">Output configuration
+          {% comment %} <input type="checkbox" class="corner-checkbox2" id="config3dCheckbox"></div> {% endcomment %}
+      </div>
+      <div class="card card-right_bottom">
+        <div class="scrollable-container">
+          <!-- <div class="form-row">
+            <h4 class="section-title-bottom" style="display: flex; align-items: center;">
+              Job Selection 
+            </h4>
+            
+          </div>
+         -->
+        <!-- <div class="mb-1 inner-box">
+        <label for="job_select" class="label1">Job Selection:</label>
+        <select id="job_select" class="component-dropdown"name="job_select">
+          <option value="Component1">Job 1</option>
+          <option value="Component2">job 2</option>
+          <option value="Component3">job 3</option>
+        </select>
+        </div> -->
+        <div class="form-row">
+            <h4 class="section-title-bottom" style="display: flex; align-items: center;">
+              Tcp ip Config
+            </h4>
+          </div>
+        
+        <div class="config-row">
+          <div class="config-label">Receiver IP</div>
+          <input id="receiver-ip" type="text" class="form-control config-input" value="127.0.0.1">
+          <div class="config-label">Port</div>
+          <input id="receiver-port" type="text" class="form-control config-port" value="8888">
+        </div>
+
+        <!-- Sender -->
+        <div class="config-row">
+          <div class="config-label">Sender IP</div>
+          <input id="sender-ip" type="text" class="form-control config-input" value="127.0.0.1">
+          <div class="config-label">Port</div>
+          <input id="sender-port" type="text" class="form-control config-port" value="8888">
+        </div>
+        {% comment %} <div class="form-row">
+          <label class="label">Margin :</label>
+          <input type="text" id ="margin" class="text-input14" value="10" placeholder="min: 12 max: 832">
+        </div> {% endcomment %}
+      </div>
+      </div>
+    </div>
+    <!-- Right Card 2 with Rectangle (new card) -->
+    
+    <div class="card-container2">
+      
+      <div class="active1">
+        <button id="runScriptButton" class="btn btn-flash" onclick="sendCoordinates()">
+          <i class="fas fa-bolt"></i> Flash
+        </button>
+        <button id="start" class="btn btn-start">
+          <i class="fas fa-play"></i> Start
+        </button>
+        <button id="stop" class="btn btn-stop">
+          <i class="fas fa-stop"></i> Stop
+        </button>
+      </div>
+      <div class="rectangle-box_5">
+        <div id="coords" class="coords-text">
+          X: 0, Y: 0, Z: 0
+        </div>
+      </div>
+      <div class="rectangle-box_4">
+        <div class="Result">
+          <img src="./static/img/medical-result.png" alt="Icon"  class="icon-image">Result
+        </div>
+      </div>
+      <div class="card card-right_bottom_2">  
+        <div class="scrollable-container2" id="resultsContainer">
+            <!-- Results will appear here -->
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+  document.getElementById('deleterec').addEventListener('click', () => deleteRectangle('rect1'));
+document.getElementById('deleterec2').addEventListener('click', () => deleteRectangle('rect2'));
+document.getElementById('deleterec3').addEventListener('click', () => deleteRectangle('rect3'));
+document.getElementById('deleterec4').addEventListener('click', () => deleteRectangle('rect4'));
+document.getElementById('deleterec5').addEventListener('click', () => deleteRectangle('rect5'));
+document.getElementById('deleterec6').addEventListener('click', () => deleteRectangle('rect6'));
+document.getElementById('deleterec7').addEventListener('click', () => deleteRectangle('rect7'));
+document.getElementById('deleterec8').addEventListener('click', () => deleteRectangle('rect8'));
+document.getElementById('deleterec9').addEventListener('click', () => deleteRectangle('rect9'));
+document.getElementById('deleterec10').addEventListener('click', () => deleteRectangle('rect10'));
+
+function deleteRectangle(rectId) {
+    let boxToDelete;
+    
+    // Find which box to delete based on the rectangle ID
+    switch(rectId) {
+        case 'rect1':
+            boxToDelete = rect1Box;
+            rect1Box = null;
+            break;
+        case 'rect2':
+            boxToDelete = rect2Box;
+            rect2Box = null;
+            break;
+        case 'rect3':
+            boxToDelete = rect3Box;
+            rect3Box = null;
+            break;
+        case 'rect4':
+            boxToDelete = rect4Box;
+            rect4Box = null;
+            break;
+        case 'rect5':
+            boxToDelete = rect5Box;
+            rect5Box = null;
+            break;
+        case 'rect6':
+            boxToDelete = rect6Box;
+            rect6Box = null;
+            break;
+        case 'rect7':
+            boxToDelete = rect7Box;
+            rect7Box = null;
+            break;
+        case 'rect8':
+            boxToDelete = rect8Box;
+            rect8Box = null;
+            break;
+
+         case 'rect9':
+            boxToDelete = rect9Box;
+            rect9Box = null;
+            break;
+
+         case 'rect10':
+            boxToDelete = rect10Box;
+            rect10Box = null;
+            break;
+    }
+    
+    if (boxToDelete) {
+        // Remove from drawnBoxes array
+        const index = drawnBoxes.findIndex(b => b.el === boxToDelete);
+        if (index !== -1) {
+            drawnBoxes.splice(index, 1);
+        }
+        
+        // Remove from DOM
+        if (boxToDelete.parentNode) {
+            boxToDelete.parentNode.removeChild(boxToDelete);
+        }
+    }
+}
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const drawButton = document.getElementById("drawcrop");
+  
+    drawButton.addEventListener("click", function() {
+      this.classList.toggle("active");
+      // Optional: set data attribute for server-side logic
+      const isActive = this.classList.contains("active");
+      this.setAttribute("data-active", isActive);
+    });
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const drawButton1 = document.getElementById("drawrec");
+  const drawButton2 = document.getElementById("drawrec2");
+  const drawButton3 = document.getElementById("drawrec3");
+  const drawButton4 = document.getElementById("drawrec4");
+  const drawButton5 = document.getElementById("drawrec5");
+  const drawButton6 = document.getElementById("drawrec6");
+  const drawButton7 = document.getElementById("drawrec7");
+  const drawButton8 = document.getElementById("drawrec8");
+  const drawButton9 = document.getElementById("drawrec9");
+  const drawButton10 = document.getElementById("drawrec10");
+  drawButton1.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect1';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+
+  drawButton2.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect2';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+
+  drawButton3.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect3';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+  drawButton4.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect4';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+   drawButton5.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect5';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+  drawButton6.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect6';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+   drawButton7.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect7';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+   drawButton8.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect8';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+   drawButton9.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect9';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+   drawButton10.addEventListener("click", function() {
+    this.classList.toggle("active");
+    isDrawMode = this.classList.contains("active");
+    currentDrawButton = 'rect10';
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    this.style.backgroundColor = isDrawMode ? "#666" : "";
+    this.style.color = isDrawMode ? "#fff" : "";
+  });
+});
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".region-row").forEach(function (row) {
+      // Works with ids like drawrec, drawrec1, drawrec2... (same for set/edit/delete)
+      const drawBtn   = row.querySelector('[id^="drawrec"]');
+      const setBtn    = row.querySelector('[id^="setBtn"]');
+      const editBtn   = row.querySelector('[id^="editBtn"]');
+      const deleteBtn = row.querySelector('[id^="deleteBtn"]'); // optional
+
+      const input     = row.querySelector('input[type="number"]');
+      
+      if (!drawBtn || !setBtn || !editBtn) return; // row not fully wired
+  
+      setBtn.addEventListener("click", function () {
+        drawBtn.disabled = true;
+        input.disabled   = true;
+
+        drawBtn.classList.add("is-disabled");
+        input.classList.add("is-disabled"); // optional: style
+      });
+  
+      // When Edit clicked → enable draw + input
+      editBtn.addEventListener("click", function () {
+        drawBtn.disabled = false;
+        input.disabled   = false;
+
+        drawBtn.classList.remove("is-disabled");
+        input.classList.remove("is-disabled");
+      });
+
+       // When Delete clicked → disable draw + input
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", function () {
+          drawBtn.disabled = true;
+          input.disabled   = true;
+
+          drawBtn.classList.add("is-disabled");
+          input.classList.add("is-disabled");
+        });
+      }
+    });
+  });
+  </script>
+
+<script>
+  function persistInput(id) {
+    const input = document.getElementById(id);
+
+    // Restore last value
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem(id);
+      if (saved !== null) {
+        input.value = saved;
+      }
+    });
+
+    // Save on change
+    input.addEventListener("input", () => {
+      localStorage.setItem(id, input.value);
+    });
+  }
+
+  function persistCheckbox(id) {
+    const checkbox = document.getElementById(id);
+
+    // Restore last state
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem(id);
+      if (saved !== null) {
+        checkbox.checked = saved === "true";
+      }
+    });
+
+    // Save on change
+    checkbox.addEventListener("change", () => {
+      localStorage.setItem(id, checkbox.checked);
+    });
+  }
+
+  function persistSelect(id) {
+    const select = document.getElementById(id);
+
+    // Restore last value
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem(id);
+      if (saved !== null) {
+        select.value = saved;
+      }
+    });
+
+    // Save on change
+    select.addEventListener("change", () => {
+      localStorage.setItem(id, select.value);
+    });
+  }
+
+  // Apply to inputs
+  persistInput("Frameselect");
+  persistInput("Profile");
+  persistInput("Exposuretime");
+  persistInput("Threshold");
+  persistInput("Timedrate");
+  persistInput("component_select");
+  persistInput("minrange");
+  persistInput("maxrange");
+  persistInput("filter");
+  persistInput("Encoderresolution");
+  persistInput("Pulseper");
+  persistInput("receiver-ip");
+  persistInput("receiver-port");
+  persistInput("sender-ip");
+  persistInput("sender-port");
+  persistInput("External_trigger");
+  persistCheckbox("TriggerModeToggle");
+  persistSelect("ImageTriggerSelect");
+  // Apply to select dropdown
+  persistSelect("Stopmode");
+  persistSelect("Advance");
+   persistCheckbox("EncoderModeToggle");
+  // Apply to dynamic fields
+  for (let i = 1; i <= 10; i++) {
+    persistInput(`Region_${i}_Tolernce`);
+  }
+</script>
+
+<script>
+  {% comment %} tab navigation script {% endcomment %}
+  function toggleCardView() {
+    const setting = document.getElementById("Setting").value;
+    const card1 = document.getElementById("card-acquisition");
+    const card2 = document.getElementById("card-trigger");
+
+    if (setting === "acu") {
+      card1.style.display = "block";
+      card2.style.display = "none";
+    } else {
+      card1.style.display = "none";
+      card2.style.display = "block";
+    }
+  }
+{% comment %}  save {% endcomment %}
+  function saveImage() {
+    const image = document.getElementById('image'); // Get the image element
+    const imageUrl = image.src; // Get the image source URL
+  
+    // Create a temporary <a> element to simulate the download
+    const link = document.createElement('a');
+    link.href = imageUrl; // Set the href of the link to the image source
+    link.download = 'image.png'; // Set the name of the file to save
+  
+    // Programmatically click the link to trigger the download
+    link.click();
+  }
+{% comment %} image external load  {% endcomment %}
+
+    function handleSource(source) {
+      const image = document.getElementById("image");
+  
+      if (source === "live") {
+        image.src = "./static/captured/two/ERL_refl - Copy.png";
+      }
+  
+      if (source === "external") {
+        const input = document.getElementById("uploadInput");
+        const file = input.files[0];
+  
+        if (file) {
+          const fileName = file.name;  // ✅ Get file name here
+          console.log("Selected File Name:", fileName);
+          selectedFileName = fileName;  // Store to global variable if needed
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            image.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+
+    {% comment %} Send config data to python {% endcomment %}
+    
+      document.getElementById("start").addEventListener("click", function () {
+    document.getElementById("loadingOverlay").style.display = "flex";
+
+    const data = {
+        acquisitionMode: document.getElementById("Frameselect").value,
+        stopMode: document.getElementById("Stopmode").value,
+        exposureTime: document.getElementById("Exposuretime").value,
+        threshold: document.getElementById("Threshold").value,
+        advance: document.getElementById("Advance").value,
+        profilePerImage: document.getElementById("Profile").value,
+        imageTrigger: document.querySelectorAll(".text-select3")[1].value,
+        timedRate: document.getElementById("Timedrate").value,
+
+        External_trigger: document.getElementById("External_trigger").value,
+        encoderResolution: document.getElementById("Encoderresolution").value,
+        pulsePerProfile: document.getElementById("Pulseper").value,
+        triggerType: document.querySelector(".text-select6").value,
+        encoderMode: document.getElementById("EncoderModeToggle").checked ? "On" : "Off",
+        triggerMode: document.getElementById("TriggerModeToggle").checked ? "On" : "Off",
+        //job_component: document.getElementById("job_select").value,//
+        receiver_ip: document.getElementById("receiver-ip").value,
+        receiver_port: document.getElementById("receiver-port").value,
+        sender_ip: document.getElementById("sender-ip").value,
+        sender_port: document.getElementById("sender-port").value
+
+    };
+
+    fetch("/start-process/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken") // Django CSRF protection
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "error") {
+            switch(data.error_code) {
+                case "CAMERA_TIMEOUT":
+                    alert("Camera timed out - check connections");
+                    break;
+                case "CAMERA_DISCONNECTED":
+                    alert("Camera not detected - please connect it");
+                    break;
+                case "CAMERA_BUSY":
+                    alert("Close other camera applications and try again");
+                    break;
+                default:
+                    alert("Error: " + data.message);
+            }
+        } else {
+            alert("Capture successful!");
+        }
+        document.getElementById("loadingOverlay").style.display = "none";
+        setTimeout(() => {
+                  location.reload();  // Refresh the page after 2 seconds
+              }, );
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Camera Not Connected Properly");
+        document.getElementById("loadingOverlay").style.display = "none";
+    });
+});
+      // CSRF token helper
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== "") {
+              const cookies = document.cookie.split(";");
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === name + "=") {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+       // Get references to the image elements
+        function refreshImages() {
+          // Get references to the image elements
+          var image2d = document.getElementById('image');
+          // Update the src attribute to force the images to reload
+          image2d.src = image2d.src.split('?')[0] + '?' + new Date().getTime(); 
+        }
+        // Call the refreshImages function when the page is loaded
+        window.onload = refreshImages;
+      
+</script>
+{% comment %} stop process {% endcomment %}
+<script>
+  
+  document.getElementById("stop").addEventListener("click", function () {
+    fetch("/stop-process/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken") // CSRF token
+        },
+        body: JSON.stringify({ message: "stop" })
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("Server response:", result);
+        alert("Stop signal sent successfully");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+</script>
+
+
+
+<script>
+  let selectedFileName = "default";
+
+  
+ function sendCoordinates() {
+    document.getElementById("loadingOverlay").style.display = "flex";
+    const resultsContainer = document.getElementById("resultsContainer");
+    resultsContainer.innerHTML = '<div class="processing-message">Processing data...</div>';
+    // Get coordinates for all rectangles
+    const selectedComponent = document.getElementById("component_select").value;
+    const corners1 = rect1Box ? getBoxCoordinatesInImageCoords(rect1Box) : null;
+    const corners2 = rect2Box ? getBoxCoordinatesInImageCoords(rect2Box) : null;
+    const corners3 = rect3Box ? getBoxCoordinatesInImageCoords(rect3Box) : null;
+    const corners4 = rect4Box ? getBoxCoordinatesInImageCoords(rect4Box) : null;
+    const corners5 = rect5Box ? getBoxCoordinatesInImageCoords(rect5Box) : null;
+    const corners6 = rect6Box ? getBoxCoordinatesInImageCoords(rect6Box) : null;
+    const corners7 = rect7Box ? getBoxCoordinatesInImageCoords(rect7Box) : null;
+    const corners8 = rect8Box ? getBoxCoordinatesInImageCoords(rect8Box) : null;
+    const corners9 = rect8Box ? getBoxCoordinatesInImageCoords(rect9Box) : null;
+    const corners10 = rect8Box ? getBoxCoordinatesInImageCoords(rect10Box) : null;
+    // Check if at least one rectangle exists
+    if (!corners1 && !corners2 && !corners3 && !corners4 && !corners5 && !corners6 && !corners7 
+                                    && !corners8  && !corners9 && !corners10) {
+        alert("Please draw at least one rectangle first!");
+        document.getElementById("loadingOverlay").style.display = "none";
+        return;
+    }
+
+    // Prepare the data object
+    const postData = {
+        component: selectedComponent,
+        rectangle1: corners1 || null,
+        rectangle2: corners2 || null,
+        rectangle3: corners3 || null,
+        rectangle4: corners4 || null,
+        rectangle5: corners5 || null,
+        rectangle6: corners6 || null,
+        rectangle7: corners7 || null,
+        rectangle8: corners8 || null,
+        rectangle9: corners9 || null,
+        rectangle10: corners10 || null,
+        depth_config: {
+           // y_pixel: parseFloat(document.getElementById("y_pixel").value),//
+            minrange: parseFloat(document.getElementById("minrange").value),
+            maxrange: parseFloat(document.getElementById("maxrange").value),
+            //dprange: parseFloat(document.getElementById("dprange").value),//
+            Region_1_Tolernce: parseFloat(document.getElementById("Region_1_Tolernce").value),
+            Region_2_Tolernce: parseFloat(document.getElementById("Region_2_Tolernce").value),
+            Region_3_Tolernce: parseFloat(document.getElementById("Region_3_Tolernce").value),
+            Region_4_Tolernce: parseFloat(document.getElementById("Region_4_Tolernce").value),
+            Region_5_Tolernce: parseFloat(document.getElementById("Region_5_Tolernce").value),
+            Region_6_Tolernce: parseFloat(document.getElementById("Region_6_Tolernce").value),
+            Region_7_Tolernce: parseFloat(document.getElementById("Region_7_Tolernce").value),
+            Region_8_Tolernce: parseFloat(document.getElementById("Region_8_Tolernce").value),
+            Region_9_Tolernce: parseFloat(document.getElementById("Region_9_Tolernce").value),
+            Region_10_Tolernce: parseFloat(document.getElementById("Region_10_Tolernce").value),
+                     
+            filter: parseFloat(document.getElementById("filter").value)
+        },
+    
+    };
+    console.log("Sending data:", postData); // Debug output
+
+    fetch('/save_corners/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+        },
+        body: JSON.stringify(postData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById("loadingOverlay").style.display = "none";
+        
+        if (data.status === "success") {
+            let resultsHTML = '<div class="range-result"><h4>Measurement Results</h4>';
+            
+            // Display range values for each rectangle
+             if (data.range_values) {
+                Object.entries(data.range_values).forEach(([rectName, rectData]) => {
+                    // Convert "rectangle1" to "Region 1"
+                    const regionNumber = rectName.replace('rectangle', '');
+                    resultsHTML += `
+                        <div class="range-item">
+                            <span class="range-label">Region ${regionNumber}:</span>
+                            <span class="range-value">Difference = ${rectData.range.toFixed(2)} mm</span>
+                        </div>`;
+                });
+            }
+            
+            // Add processing time if available
+            if (data.processing_time) {
+                resultsHTML += `
+                    <div class="processing-time">
+                        Processed in ${data.processing_time.toFixed(4)} seconds
+                    </div>`;
+            }
+            
+            resultsContainer.innerHTML = resultsHTML;
+            alert("Data saved successfully!");
+            // Refresh the image if needed
+            const image = document.getElementById('image');
+            image.src = `./static/captured/two/rotated_bounding_boxes.png?t=${new Date().getTime()}`;
+        } else {
+            alert("Error: " + (data.message || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        document.getElementById("loadingOverlay").style.display = "none";
+        console.error('Error:', error);
+        alert("Failed to save data: " + (error.message || "Check console for details"));
+    });
+}
+  function getCSRFToken() {
+    const cookieValue = document.cookie.match('(^|;)\\s*' + 'csrftoken' + '\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+  }
+</script>
+ 
+
+{% comment %}  z cordintes and mouse  {% endcomment %}
+<script>
+  let zData = [];
+  let zDataLoaded = false;
+  let imageLoaded = false;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const image = document.getElementById('image');
+    const coords = document.getElementById('coords');
+    const dimensionsParagraph = document.getElementById('imageDimensions');
+
+    if (!image || !coords) {
+      console.error("Required elements not found!");
+      return;
+    }
+    // Image load tracking
+    image.addEventListener('load', () => {
+      imageLoaded = true;
+      console.log('Image fully loaded.');
+
+      if (dimensionsParagraph) {
+        dimensionsParagraph.textContent = `Image Dimensions: ${image.naturalWidth} x ${image.naturalHeight}`;
+      }
+    });
+
+    // Trigger load if image is already cached
+    if (image.complete) {
+      image.dispatchEvent(new Event('load'));
+    }
+``
+    // Load Z data independently
+    //C:\github\measurement-3d\scratch\static\cordord16.json
+    //static/captured/mes/cordord16.json
+    fetch('../static/cordord18.json?v=' + Date.now())
+      .then(response => response.json())
+      .then(data => {
+        zData = data;
+        zDataLoaded = true;
+        console.log('Z Data loaded:', zData.length, 'rows');
+      })
+      .catch(error => {
+        console.error('Error loading Z data:', error);
+      });
+
+    // Mouse move handler
+    image.addEventListener('mousemove', function (e) {
+      if (!zDataLoaded || !imageLoaded) return;
+
+      const rect = image.getBoundingClientRect();
+      const scaleX = image.naturalWidth / rect.width;
+      const scaleY = image.naturalHeight / rect.height;
+
+      const imageX = Math.floor((e.clientX - rect.left) * scaleX);
+      const imageY = Math.floor((e.clientY - rect.top) * scaleY);
+
+      let z = '0';
+
+      if (
+        imageY >= 0 && imageY < zData.length &&
+        imageX >= 0 && imageX < zData[0].length
+      ) {
+        const zRaw = zData[imageY][imageX];
+        z = isFinite(zRaw) ? parseFloat(zRaw).toFixed(5) : zRaw;
+      }
+      coords.textContent = `X: ${imageX}, Y: ${imageY}, Z: ${z}`;
+    });
+
+    image.addEventListener('mouseleave', function () {
+      coords.textContent = 'X: 0, Y: 0, Z: 0';
+    });
+  });
+</script>
+
+<script>
+  const container = document.getElementById("imageContainer");
+  const img = document.getElementById("image");
+  const button = document.getElementById("drawrec");
+
+  let scale = 1;
+  let minScale = 0.2;
+  const maxScale = 50;
+  let currentX = 0, currentY = 0;
+  let isDragging = false, dragStartX = 0, dragStartY = 0;
+  let isDrawMode = false, isDrawing = false;
+  let drawBox = null, drawStartX = 0, drawStartY = 0;
+  const drawnBoxes = [];
+  let currentDrawButton = null; // 'rect1', 'rect2', or 'rect3'
+let rect1Box = null, rect2Box = null, rect3Box = null,rect4Box = null,rect5Box = null,rect6Box = null,
+                                     rect7Box = null ,rect8Box = null,rect9Box = null,rect10Box = null;  // Store references to all rectangles
+  img.onload = centerImage;
+
+  function centerImage() {
+    const containerRect = container.getBoundingClientRect();
+    minScale = Math.min(containerRect.width / img.naturalWidth, containerRect.height / img.naturalHeight);
+    scale = minScale;
+    currentX = (containerRect.width - img.naturalWidth * scale) / 2;
+    currentY = (containerRect.height - img.naturalHeight * scale) / 2;
+    applyTransform();
+  }
+
+  function applyTransform() {
+    clampPan();
+    img.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+    updateDrawnBoxes();
+  }
+
+  function clampPan() {
+    const w = img.naturalWidth * scale;
+    const h = img.naturalHeight * scale;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    currentX = w < cw ? (cw - w) / 2 : Math.min(0, Math.max(cw - w, currentX));
+    currentY = h < ch ? (ch - h) / 2 : Math.min(0, Math.max(ch - h, currentY));
+  }
+
+  function updateDrawnBoxes() {
+    const containerRect = container.getBoundingClientRect();
+    const imageRect = img.getBoundingClientRect();
+    const offsetX = imageRect.left - containerRect.left;
+    const offsetY = imageRect.top - containerRect.top;
+
+    drawnBoxes.forEach((box) => {
+      const el = box.el;
+      const centerX = (box.x + box.width / 2) * scale;
+      const centerY = (box.y + box.height / 2) * scale;
+
+      el.style.width = `${box.width * scale}px`;
+      el.style.height = `${box.height * scale}px`;
+      el.style.left = `${offsetX + centerX}px`;
+      el.style.top = `${offsetY + centerY}px`;
+      el.style.transform = `translate(-50%, -50%) rotate(${box.rotation}deg)`;
+      el.style.transformOrigin = 'center';
+    });
+  }
+
+  button.addEventListener("click", () => {
+    isDrawMode = !isDrawMode;
+    container.style.cursor = isDrawMode ? "crosshair" : "grab";
+    button.style.backgroundColor = isDrawMode ? "#666" : "";
+    button.style.color = isDrawMode ? "#fff" : "";
+  });
+
+  function makeInteractive(box,id) {
+
+    const label = document.createElement('div');
+    label.className = 'box-label';
+    label.textContent = id.replace('rect', ''); // Shows "1" for "rect1", etc.
+    box.appendChild(label);
+
+    ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+      const h = document.createElement('div');
+      h.className = `handle ${pos}`;
+      box.appendChild(h);
+
+      h.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        const item = drawnBoxes.find(b => b.el === box);
+        let startX = e.clientX, startY = e.clientY;
+        let startWidth = item.width, startHeight = item.height;
+        let startLeft = item.x, startTop = item.y;
+
+        function resize(ev) {
+          const dx = (ev.clientX - startX) / scale;
+          const dy = (ev.clientY - startY) / scale;
+
+          switch (pos) {
+            case 'tl':
+              item.x = startLeft + dx;
+              item.y = startTop + dy;
+              item.width = startWidth - dx;
+              item.height = startHeight - dy;
+              break;
+            case 'tr':
+              item.y = startTop + dy;
+              item.width = startWidth + dx;
+              item.height = startHeight - dy;
+              break;
+            case 'bl':
+              item.x = startLeft + dx;
+              item.width = startWidth - dx;
+              item.height = startHeight + dy;
+              break;
+            case 'br':
+              item.width = startWidth + dx;
+              item.height = startHeight + dy;
+              break;
+          }
+          updateDrawnBoxes();
+        }
+
+        function stopResize() {
+          document.removeEventListener('mousemove', resize);
+          document.removeEventListener('mouseup', stopResize);
+        }
+
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopResize);
+      });
+    });
+
+    const rotateHandle = document.createElement('div');
+    rotateHandle.className = 'rotate-handle';
+    box.appendChild(rotateHandle);
+
+    rotateHandle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      const item = drawnBoxes.find(b => b.el === box);
+      const boxRect = box.getBoundingClientRect();
+      const centerX = boxRect.left + boxRect.width / 2;
+      const centerY = boxRect.top + boxRect.height / 2;
+
+      const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+      const startRotation = item.rotation;
+
+      function rotate(ev) {
+        const currentAngle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
+        const rotationDelta = currentAngle - startAngle;
+        item.rotation = startRotation + rotationDelta * (180 / Math.PI);
+        updateDrawnBoxes();
+        const corners = getBoxCoordinatesInImageCoords(drawBox);
+          if (corners) {
+            console.log("Top Left:", corners.topLeft);
+            console.log("Top Right:", corners.topRight);
+            console.log("Bottom Left:", corners.bottomLeft);
+            console.log("Bottom Right:", corners.bottomRight);
+          }
+      }
+      
+      function stopRotate() {
+        document.removeEventListener('mousemove', rotate);
+        document.removeEventListener('mouseup', stopRotate);
+        const corners = getBoxCoordinatesInImageCoords(drawBox);
+          if (corners) {
+            console.log("Top Left:", corners.topLeft);
+            console.log("Top Right:", corners.topRight);
+            console.log("Bottom Left:", corners.bottomLeft);
+            console.log("Bottom Right:", corners.bottomRight);
+          }
+      }
+      
+      document.addEventListener('mousemove', rotate);
+      document.addEventListener('mouseup', stopRotate);
+    });
+
+    box.addEventListener('mousedown', e => {
+      console.log("Box mouse down");
+      e.stopPropagation();
+      if (e.target.classList.contains('handle') || e.target.classList.contains('rotate-handle')) return;
+
+      let startX = e.clientX, startY = e.clientY;
+      const item = drawnBoxes.find(b => b.el === box);
+
+      function move(ev) {
+        console.log("Box move");
+        const dx = (ev.clientX - startX) / scale;
+        const dy = (ev.clientY - startY) / scale;
+        item.x += dx;
+        item.y += dy;
+        startX = ev.clientX;
+        startY = ev.clientY;
+        updateDrawnBoxes();
+      }
+
+      function stop() {
+        console.log("Box move stop");
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseup', stop);
+      } 
+
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', stop);
+    });
+    
+  }
+
+  container.addEventListener("mousedown", (e) => {
+    const imageRect = img.getBoundingClientRect();
+    if (
+      e.clientX < imageRect.left || e.clientX > imageRect.right ||
+      e.clientY < imageRect.top || e.clientY > imageRect.bottom
+    ) {
+      return;
+    }
+    const rect = container.getBoundingClientRect();
+
+    if (isDrawMode) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("Container mouse down (draw mode)");
+      drawStartX = e.clientX - rect.left;
+      drawStartY = e.clientY - rect.top;
+      drawBox = document.createElement("div");
+      drawBox.className = "draw-box";
+      drawBox.style.left = `${drawStartX}px`;
+      drawBox.style.top = `${drawStartY}px`;
+      container.appendChild(drawBox);
+      isDrawing = true;
+    } else {
+      console.log("Container mouse down (dragging)");
+      isDragging = true;
+      dragStartX = e.clientX - currentX;
+      dragStartY = e.clientY - currentY;
+      container.style.cursor = "grabbing";
+    }
+  });
+
+  container.addEventListener("mousemove", (e) => {
+    const rect = container.getBoundingClientRect();
+
+    if (isDragging && !isDrawMode) {
+      currentX = e.clientX - dragStartX;
+      currentY = e.clientY - dragStartY;
+      applyTransform();
+    }
+
+    if (isDrawing) {
+      e.preventDefault();
+      e.stopPropagation()
+      const imageRect = img.getBoundingClientRect();
+      if (
+        e.clientX < imageRect.left || e.clientX > imageRect.right ||
+        e.clientY < imageRect.top || e.clientY > imageRect.bottom
+      ) {
+        return;
+      }
+      console.log("Drawing box (draw mode)");
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const width = x - drawStartX;
+      const height = y - drawStartY;
+      drawBox.style.left = `${width < 0 ? x : drawStartX}px`;
+      drawBox.style.top = `${height < 0 ? y : drawStartY}px`;
+      drawBox.style.width = `${Math.abs(width)}px`;
+      drawBox.style.height = `${Math.abs(height)}px`;
+    }
+  });
+
+  container.addEventListener("mouseup", (e) => {
+  const imageRect = img.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const offsetX = imageRect.left - containerRect.left;
+  const offsetY = imageRect.top - containerRect.top;
+
+  if (isDrawing && currentDrawButton) {
+    isDrawing = false;
+    container.style.cursor = "default";
+
+    const boxLeft = parseFloat(drawBox.style.left) - offsetX;
+    const boxTop = parseFloat(drawBox.style.top) - offsetY;
+    const boxWidth = parseFloat(drawBox.style.width);
+    const boxHeight = parseFloat(drawBox.style.height);
+
+    const boxData = {
+      el: drawBox,
+      id: currentDrawButton,
+      x: boxLeft / scale,
+      y: boxTop / scale,
+      width: boxWidth / scale,
+      height: boxHeight / scale,
+      rotation: 0,
+    };
+
+    // Store the box reference based on which button was clicked
+    if (currentDrawButton === 'rect1') {
+      // Remove previous rectangle 1 if it exists
+      if (rect1Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect1Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect1Box);
+        }
+      }
+      rect1Box = drawBox;
+    } 
+    else if (currentDrawButton === 'rect2') {
+      // Remove previous rectangle 2 if it exists
+      if (rect2Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect2Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect2Box);
+        }
+      }
+      rect2Box = drawBox;
+    }
+    else if (currentDrawButton === 'rect3') {
+      // Remove previous rectangle 3 if it exists
+      if (rect3Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect3Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect3Box);
+        }
+      }
+      rect3Box = drawBox;
+    }
+     else if (currentDrawButton === 'rect4') {
+      // Remove previous rectangle 3 if it exists
+      if (rect4Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect4Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect4Box);
+        }
+      }
+       rect4Box = drawBox;
+    }
+     else if (currentDrawButton === 'rect5') {
+      // Remove previous rectangle 3 if it exists
+      if (rect5Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect5Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect5Box);
+        }
+      }
+       rect5Box = drawBox;
+    }
+    else if (currentDrawButton === 'rect6') {
+      // Remove previous rectangle 3 if it exists
+      if (rect6Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect6Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect6Box);
+        }
+      }
+       rect6Box = drawBox;
+    }
+    else if (currentDrawButton === 'rect7') {
+      // Remove previous rectangle 3 if it exists
+      if (rect7Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect7Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect7Box);
+        }
+      }
+       rect7Box = drawBox;
+    }
+    else if (currentDrawButton === 'rect8') {
+      // Remove previous rectangle 3 if it exists
+      if (rect8Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect8Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect8Box);
+        }
+      }
+       rect8Box = drawBox;
+    }
+    else if (currentDrawButton === 'rect9') {
+      // Remove previous rectangle 3 if it exists
+      if (rect9Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect9Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect9Box);
+        }
+      }
+       rect9Box = drawBox;
+    }
+
+     else if (currentDrawButton === 'rect10') {
+      // Remove previous rectangle 3 if it exists
+      if (rect10Box) {
+        const index = drawnBoxes.findIndex(b => b.el === rect10Box);
+        if (index !== -1) {
+          drawnBoxes.splice(index, 1);
+          container.removeChild(rect10Box);
+        }
+      }
+       rect10Box = drawBox;
+    }
+
+    drawnBoxes.push(boxData);
+makeInteractive(drawBox, currentDrawButton);
+    updateDrawnBoxes();
+    
+    // Reset the current draw button and mode
+    currentDrawButton = null;
+    isDrawMode = false;
+    
+    // Update button styles
+    document.getElementById("drawrec").classList.remove("active");
+    document.getElementById("drawrec2").classList.remove("active");
+    document.getElementById("drawrec3").classList.remove("active");
+    document.getElementById("drawrec4").classList.remove("active");
+    document.getElementById("drawrec5").classList.remove("active");
+    document.getElementById("drawrec6").classList.remove("active");
+    document.getElementById("drawrec7").classList.remove("active");
+    document.getElementById("drawrec8").classList.remove("active");
+    document.getElementById("drawrec9").classList.remove("active");
+    document.getElementById("drawrec10").classList.remove("active");
+    document.getElementById("drawrec").style.backgroundColor = "";
+    document.getElementById("drawrec").style.color = "";
+    document.getElementById("drawrec2").style.backgroundColor = "";
+    document.getElementById("drawrec2").style.color = "";
+    document.getElementById("drawrec3").style.backgroundColor = "";
+    document.getElementById("drawrec3").style.color = "";
+    document.getElementById("drawrec4").style.backgroundColor = "";
+    document.getElementById("drawrec4").style.color = "";
+    document.getElementById("drawrec5").style.backgroundColor = "";
+    document.getElementById("drawrec5").style.color = "";
+    document.getElementById("drawrec6").style.backgroundColor = "";
+    document.getElementById("drawrec6").style.color = "";
+    document.getElementById("drawrec7").style.backgroundColor = "";
+    document.getElementById("drawrec7").style.color = "";
+    document.getElementById("drawrec8").style.backgroundColor = "";
+    document.getElementById("drawrec8").style.color = "";
+    document.getElementById("drawrec9").style.backgroundColor = "";
+    document.getElementById("drawrec9").style.color = "";
+    document.getElementById("drawrec10").style.backgroundColor = "";
+    document.getElementById("drawrec10").style.color = "";
+    return;
+  }
+
+  isDragging = false;
+  container.style.cursor = "default";
+});
+ function getBoxCoordinatesInImageCoords(drawBox) {
+    if (!drawBox) {
+        console.error("No drawBox provided!");
+        return null;
+    }
+
+    const boxData = drawnBoxes.find(b => b.el === drawBox);
+    if (!boxData) {
+        console.error("Box data not found in drawnBoxes!");
+        return null;
+    }
+
+    const { x, y, width, height, rotation } = boxData;
+
+    // Center of the box (in image coordinates)
+    const cx = x + width / 2;
+    const cy = y + height / 2;
+
+    // Convert rotation to radians
+    const rad = rotation * (Math.PI / 180);
+
+    // Helper to rotate around center
+    function rotatePoint(px, py) {
+        const dx = px - cx;
+        const dy = py - cy;
+        const rx = dx * Math.cos(rad) - dy * Math.sin(rad) + cx;
+        const ry = dx * Math.sin(rad) + dy * Math.cos(rad) + cy;
+        return { x: Math.round(rx), y: Math.round(ry) };
+    }
+
+    // Unrotated corners (in image coordinates)
+    const topLeft = rotatePoint(x, y);
+    const topRight = rotatePoint(x + width, y);
+    const bottomLeft = rotatePoint(x, y + height);
+    const bottomRight = rotatePoint(x + width, y + height);
+
+    return {
+        topLeft,
+        topRight,
+        bottomLeft,
+        bottomRight
+    };
+}
+  function resetImage() {
+    const containerRect = container.getBoundingClientRect();
+    scale = minScale;
+    currentX = (containerRect.width - img.naturalWidth * scale) / 2;
+    currentY = (containerRect.height - img.naturalHeight * scale) / 2;
+    applyTransform();
+  }
+
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = -e.deltaY || e.wheelDelta;
+    const zoomAmount = delta > 0 ? 1.1 : 0.9;
+    const newScale = scale * zoomAmount;
+
+    if (newScale < minScale) {
+
+      resetImage();
+      console.log("Reached minimum zoom level:", minScale);
+      return;
+    }
+
+    if (newScale > maxScale) {
+      
+      return;
+    }
+
+    const rect = container.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    const dx = (offsetX - currentX) / scale;
+    const dy = (offsetY - currentY) / scale;
+
+    scale = newScale;
+    currentX = offsetX - dx * scale;
+    currentY = offsetY - dy * scale;
+
+    applyTransform();
+  }, { passive: false });
+
+</script>
+
+</body> 
+</html>

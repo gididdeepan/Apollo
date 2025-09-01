@@ -1,0 +1,148 @@
+{
+    "rectangle1": {
+        "topLeft": {
+            "x": 1467,
+            "y": 63
+        },
+        "topRight": {
+            "x": 1551,
+            "y": 63
+        },
+        "bottomLeft": {
+            "x": 1467,
+            "y": 89
+        },
+        "bottomRight": {
+            "x": 1551,
+            "y": 89
+        }
+    },
+    "rectangle2": {
+        "topLeft": {
+            "x": 1567,
+            "y": 63
+        },
+        "topRight": {
+            "x": 1630,
+            "y": 63
+        },
+        "bottomLeft": {
+            "x": 1567,
+            "y": 88
+        },
+        "bottomRight": {
+            "x": 1630,
+            "y": 88
+        }
+    },
+    "rectangle3": {
+        "topLeft": {
+            "x": 1646,
+            "y": 62
+        },
+        "topRight": {
+            "x": 1707,
+            "y": 62
+        },
+        "bottomLeft": {
+            "x": 1646,
+            "y": 92
+        },
+        "bottomRight": {
+            "x": 1707,
+            "y": 92
+        }
+    },
+    "rectangle4": {
+        "topLeft": {
+            "x": 1718,
+            "y": 63
+        },
+        "topRight": {
+            "x": 1790,
+            "y": 63
+        },
+        "bottomLeft": {
+            "x": 1718,
+            "y": 89
+        },
+        "bottomRight": {
+            "x": 1790,
+            "y": 89
+        }
+    },
+    "rectangle5": {
+        "topLeft": {
+            "x": 1806,
+            "y": 65
+        },
+        "topRight": {
+            "x": 1876,
+            "y": 65
+        },
+        "bottomLeft": {
+            "x": 1806,
+            "y": 88
+        },
+        "bottomRight": {
+            "x": 1876,
+            "y": 88
+        }
+    },
+    "rectangle6": {
+        "topLeft": {
+            "x": 1888,
+            "y": 63
+        },
+        "topRight": {
+            "x": 1961,
+            "y": 63
+        },
+        "bottomLeft": {
+            "x": 1888,
+            "y": 89
+        },
+        "bottomRight": {
+            "x": 1961,
+            "y": 89
+        }
+    },
+    "rectangle7": {
+        "topLeft": {
+            "x": 1974,
+            "y": 62
+        },
+        "topRight": {
+            "x": 2038,
+            "y": 62
+        },
+        "bottomLeft": {
+            "x": 1974,
+            "y": 90
+        },
+        "bottomRight": {
+            "x": 2038,
+            "y": 90
+        }
+    },
+    "rectangle8": {
+        "topLeft": {
+            "x": 2049,
+            "y": 61
+        },
+        "topRight": {
+            "x": 2129,
+            "y": 61
+        },
+        "bottomLeft": {
+            "x": 2049,
+            "y": 89
+        },
+        "bottomRight": {
+            "x": 2129,
+            "y": 89
+        }
+    },
+    "rectangle9": null,
+    "rectangle10": null
+}

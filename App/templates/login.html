@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  {% load static%}
+  <link rel="stylesheet" href="static/csss/login.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+  <div class="login">
+    <div class="login-text-field">
+      <div>
+        <img src="{% static 'img/erl-logo png.png' %}" class="img-fluid" alt="" 
+             style="margin-top: -300px;margin-left: -30px;" width="150px">
+        <img src="{% static 'img/ERL-logo.png' %}" class="img-fluid" alt="" 
+             style="margin-top: -300px;margin-left: -10px;" width="90px">
+      </div>
+      <span class="login-text1">Hey there, <span style="color: #62B6CB;">Welcome</span> back</span>
+      <span class="log">Enter your credentials to get started</span>
+    </div>
+
+    <div class="login-box">
+      <input id="positionInput" placeholder="Select Your Position" class="login-user" />
+      <input id="passwordInput" placeholder="Password" type="password" class="login-password" />
+
+      <div class="remember">
+        <div>
+          <input type="checkbox" />
+          <span class="remember-text">Remember Password</span>
+        </div>
+        <div class="forgot-password">
+          <a href="#" class="login-text2">Forgot Password?</a>
+        </div>
+      </div>
+
+      <button type="button" class="login-button" id="loginButton">
+        Login
+      </button>
+    </div>
+  </div>
+<script>
+  document.getElementById("loginButton").addEventListener("click", function() {
+    var position = document.getElementById("positionInput").value.trim();
+    var password = document.getElementById("passwordInput").value.trim();
+
+    // Predefined correct MAC
+    var macid = "27772739667"; 
+    // MAC address passed from Django
+    var macAddress = "{{ mac_address }}";
+
+    console.log("macAddress:", macAddress);
+
+    if (
+      position.toLowerCase() === "admin" && 
+      password === "erlvision" && 
+      macAddress == macid
+    ) {
+      // ✅ All conditions are correct
+      window.location.href = "{% url 'home' %}";
+    } else {
+      // ❌ Any condition fails
+      alert("Invalid Position, Password, or Unauthorized Device!");
+    }
+  });
+</script> 
+  {% comment %}  {% endcomment %}
+  
+  {% comment %} <button id="runScriptButton">Run Python Script</button> {% endcomment %}
+
+{% comment %} <script>
+  var k = 40; 
+  document.getElementById("runScriptButton").addEventListener("click", function() {
+    // When the button is clicked, send a request to the server
+    fetch("{% url 'run_script' %}?k=" + k)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(data => {
+        alert(data); // Display any response from the server
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  });
+</script> {% endcomment %}
+
+  
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
