@@ -1,0 +1,167 @@
+####################################### Django Change #####################################################
+
+#settings.py
+#Add this 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#urls.py
+#Add this 
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    . . .
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+In your root directoryfiles saveand access in media directory  image,json,csv etc . . .
+Give like this ..
+
+
+##Image 
+
+from django.conf import settings
+
+output_file = os.path.join(settings.MEDIA_ROOT, "captured", "two", "ERL_refl.png")
+os.makedirs(os.path.dirname(output_file), exist_ok=True)
+save_image_to_disk(buffer.payload.components[1], output_file)
+
+#json 
+summary_file = os.path.join(settings.MEDIA_ROOT, "job_summary.json")
+
+#javascript 
+
+fetch('/media/cordord18.json?v=' + Date.now())
+
+#Html
+
+<img id="image" src="{{ MEDIA_URL }}captured/two/ERL_refl.png"  alt="Zoomable" />
+
+
+
+
+
+#############################################################################    EXE  ####################################################
+
+step:1
+
+#Install
+
+cd "C:\Erl\Python\Apollo app"
+py -3.11 -m venv env
+env\Scripts\activate
+pip install django harvesters Pillow orjson opencv-python scipy pyinstaller
+
+
+step:2
+
+Test your app 
+python manage.py runserver
+
+step:3
+pyinstaller --onefile app_launcher.py
+#pyinstaller app_launcher.py
+
+#code
+
+import os
+import webbrowser
+from django.core.management import execute_from_command_line
+
+if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cable_project.settings")
+
+    # Open browser automatically (after a small delay)
+    url = "http://127.0.0.1:8000"
+    try:
+        webbrowser.open_new(url)  # Opens in default browser
+    except Exception as e:
+        print(f"Could not open browser automatically: {e}")
+    execute_from_command_line([
+        "manage.py",
+        "runserver",
+        "127.0.0.1:8000",
+        "--noreload"
+    ])
+
+
+
+
+step:4
+
+#app_launcher.spec
+#change the code just copy paste 
+
+# -*- mode: python ; coding: utf-8 -*-
+
+block_cipher = None
+
+a = Analysis(
+    ['app_launcher.py'],
+    pathex=[],
+    binaries=[],
+    datas=[
+        ('templates', 'templates'),
+        ('static', 'static'),
+        ('db.sqlite3', '.'),
+        ('SICKGigEVisionTL.cti', '.'),
+        ('media', 'media'),  # Add this if you have a media folder
+    ],
+    hiddenimports=[
+        'cv2',
+        'cv2.cv2',
+        'scipy',
+        'scipy.special',
+        'scipy.special._ufuncs',
+        'scipy.sparse',
+        'django.core.management',
+        'django.core.handlers.wsgi',
+        'django.utils',
+        'PIL',
+        'Pillow',
+        'harvesters',
+        'orjson',
+        # Add other modules you use
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+    optimize=0,
+)
+
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='app_launcher',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True
+)
+
+
+step:5
+
+pyinstaller app_launcher.spec
+
+Run the cmd 
+Then Double click the exe 
+
+
+
