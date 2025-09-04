@@ -11,6 +11,7 @@ import time
 import orjson
 from Continuous_Tire import c_tire
 import os
+from django.conf import settings
 def wait_for_trigger(HOST, PORT):
     """Waits for a TCP client to send trigger value."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -224,7 +225,10 @@ def main(Frame,stopMode,exposureTime,threshold,advance,profilePerImage,RisingEdg
                     
                     # np.savetxt("data.txt", arr, fmt="%.6f")
                     # C:\ocr_vision\cable_project\static\captured\mes\image_refl2.png   
-                    save_image_to_disk(buffer.payload.components[1], "./static/captured/two/ERL_refl - Copy.png")
+                    output_file = os.path.join(settings.MEDIA_ROOT, "captured", "two", "ERL_refl.png")
+                    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+                    save_image_to_disk(buffer.payload.components[1], output_file)
+                    # save_image_to_disk(buffer.payload.components[1], "./static/captured/two/ERL_refl - Copy.png")
                     # save_range_image_to_disk(buffer.payload.components[0], f"{BASE_FILE_NAME}_range_image.png")
                     
                     # print("image saved")

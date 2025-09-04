@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
+{% csrf_token %}
 
 <body>
   <nav class="navbar">
@@ -41,7 +42,6 @@
       </div>
     </div>
   </div>
-  
   <!-- CARD VIEW 1: Acquisition Setting -->
   <div class="card-row" id="card-acquisition">
     <div class="card card-left">
@@ -157,7 +157,7 @@
       <img src="/static/pattern-18044.gif" alt="Loading..." style="width: 80px;">
   </div>
       <div id="imageContainer">
-        <img id="image" src="./static/captured/two/ERL_refl - Copy.png" alt="Zoomable" />
+        <img id="image" src="{{ MEDIA_URL }}captured/two/ERL_refl.png"  alt="Zoomable" />
       </div>
   </div>
 {% comment %}  {% endcomment %}
@@ -173,7 +173,7 @@
        
         <div class="card card-left_bottom">
           <div class="scrollable-container">
-            <h4 class="section-title-top">Regions</h4>
+            <h4 class="section-title-top">Componets</h4>
         
             <!-- Component Selection -->
             <div class="mb-1 inner-box">
@@ -186,6 +186,7 @@
             </div>
         
             <!-- Depth Config -->
+             <h4 class="section-title-top"> Region Value </h4>
             <div class="form-row depth-config">
               <label class="region-label">Min</label>
               <input type="number" id="minrange"  value="101"
@@ -197,7 +198,7 @@
               <input type="number" id="filter"  value="0.5"
               step="0.5" placeholder="0.5" class="config-input">
             </div>
-        
+            <h4 class="section-title-top"> Draw region </h4>
             <!-- Regions Table -->
             <div class="regions-block">
               <div class="regions-header">
@@ -963,18 +964,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             // Add processing time if available
-            if (data.processing_time) {
-                resultsHTML += `
-                    <div class="processing-time">
-                        Processed in ${data.processing_time.toFixed(4)} seconds
-                    </div>`;
-            }
+          
             
             resultsContainer.innerHTML = resultsHTML;
             alert("Data saved successfully!");
             // Refresh the image if needed
             const image = document.getElementById('image');
-            image.src = `./static/captured/two/rotated_bounding_boxes.png?t=${new Date().getTime()}`;
+            image.src = `./media/captured/two/marked_outliers.png?t=${new Date().getTime()}`;
         } else {
             alert("Error: " + (data.message || "Unknown error"));
         }
@@ -1025,7 +1021,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Load Z data independently
     //C:\github\measurement-3d\scratch\static\cordord16.json
     //static/captured/mes/cordord16.json
-    fetch('../static/cordord18.json?v=' + Date.now())
+    fetch('/media/cordord18.json?v=' + Date.now())
+   // fetch('../static/cordord18.json?v=' + Date.now())
       .then(response => response.json())
       .then(data => {
         zData = data;

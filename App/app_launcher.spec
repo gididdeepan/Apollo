@@ -3,16 +3,32 @@
 block_cipher = None
 
 a = Analysis(
-    ['app_launcher.py'],   # your main script
+    ['app_launcher.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('templates', 'templates'),   # include templates folder
-        ('static', 'static'),         # include static folder
-        ('db.sqlite3', '.'),          # include database file
+        ('templates', 'templates'),
+        ('static', 'static'),
+        ('db.sqlite3', '.'),
         ('SICKGigEVisionTL.cti', '.'),
+        ('media', 'media'),  # Add this if you have a media folder
     ],
-    hiddenimports=[],
+    hiddenimports=[
+        'cv2',
+        'cv2.cv2',
+        'scipy',
+        'scipy.special',
+        'scipy.special._ufuncs',
+        'scipy.sparse',
+        'django.core.management',
+        'django.core.handlers.wsgi',
+        'django.utils',
+        'PIL',
+        'Pillow',
+        'harvesters',
+        'orjson',
+        # Add other modules you use
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -30,12 +46,12 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='app_launcher',   # name of your exe
+    name='app_launcher',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True  # change to False if you don’t want console window
+    console=True
 )

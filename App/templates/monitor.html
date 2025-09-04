@@ -176,7 +176,7 @@
     </div>
 
     <div class="monitor-container">
-      <img id="monitorImage" src="{% static 'captured/two/marked_outliers.png' %}" alt="Live Image">
+      <img id="monitorImage" src="{{ MEDIA_URL }}captured/two/marked_outliers.png" alt="Live Image">
       <div class="last-update">  
         <span class="pulse"></span>Last updated: <span id="updateTime">Just now</span> | <span id="clock">Time: --</span>
       </div>
@@ -186,20 +186,30 @@
   <script>
     function refreshImage() {
       const monitorImg = document.getElementById("monitorImage");
-      monitorImg.src = "{% static 'captured/two/marked_outliers.png' %}?t=" + new Date().getTime();
+      monitorImg.src = "{{ MEDIA_URL }}captured/two/marked_outliers.png?t=" + new Date().getTime();
     }
 
     function refreshStats() {
-      fetch("/api/job_summary/")
-        .then(response => response.json())
+    fetch("/api/job_summary/")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-          document.getElementById("comp").innerText = "Component: " + data.job_summary.Component;
-          document.getElementById("job").innerText = "Job Count: " + data.job_summary.JobCount;
-          document.getElementById("ok").innerText =  "OK: " + data.job_summary.OK;
-          document.getElementById("fail").innerText = "FAIL: " + data.job_summary.FAIL;
-          document.getElementById("updateTime").innerText = "Just now";
+            // Safe assignment with fallbacks
+            document.getElementById("comp").innerText = "Component: " + (data.job_summary.Component || "N/A");
+            document.getElementById("job").innerText = "Job Count: " + (data.job_summary.JobCount || 0);
+            document.getElementById("ok").innerText = "OK: " + (data.job_summary.OK || 0);
+            document.getElementById("fail").innerText = "FAIL: " + (data.job_summary.FAIL || 0);
+            document.getElementById("updateTime").innerText = "Just now";
+        })
+        .catch(error => {
+            console.error("Error fetching job summary:", error);
+            document.getElementById("updateTime").innerText = "Update failed";
         });
-    }
+}
 
     function updateClock() {
       const now = new Date();
