@@ -12,11 +12,9 @@ import orjson
 from Continuous_Tire import c_tire
 import os
 from django.conf import settings
-import sys 
-
+import sys
 
 sys.path.append(os.path.dirname(__file__))
-
 try:
     from Continuous_Tire import c_tire
 except ImportError:
@@ -224,16 +222,11 @@ def main(Frame,stopMode,exposureTime,threshold,advance,profilePerImage,RisingEdg
                     # tai(arr)
                     # value=tai(arr)
                     # s.sendall(str(value).encode())
-                    
-    
                     # Load depth data from a .npy file (replace with your file path)
                     # depth_map = np.load("bun_depth.npy")  # shape should be (500, 500)
                     # np.save("./static/data.npy", arr)10
                     cordord16_list = arr.tolist()
-
-
                     # # Save to JSON file\
-                    
                     # np.savetxt("data.txt", arr, fmt="%.6f")
                     # C:\ocr_vision\cable_project\static\captured\mes\image_refl2.png   
                     output_file = os.path.join(settings.MEDIA_ROOT, "captured", "two", "ERL_refl.png")

@@ -361,18 +361,21 @@ from django.conf import settings
 def s_tire():
     # --- CONFIG FILES ---
     # FIXED: Use proper file paths with MEDIA_ROOT
-    print("above")
+    function_time=time.time()
+    # print("above")
     media_root = settings.MEDIA_ROOT
-    print("here",media_root)
+    # print("here",media_root)
     depth_path = os.path.join(media_root, 'depth_config.json')
-    print("first")
+    # print("first")
     rec = os.path.join(media_root, 'rectangle_coordinates.json')
-    print("Second")
+    # print("Second")
     filter_path = os.path.join(media_root, 'tire_filters.json')
-    print("thirsd")
+    # print("thirsd")
     raw_data_path = os.path.join(settings.MEDIA_ROOT, 'raw_data.npy')
-    print("raw_dtat reead")
+    # print("raw_dtat reead")
+    image_read=time.time()
     image_path = os.path.join(media_root, 'captured', 'two', 'ERL_refl.png')
+    # print("image read time",time.time()-image_read)
     
     # Ensure directories exist
     os.makedirs(media_root, exist_ok=True)
@@ -383,7 +386,7 @@ def s_tire():
         with open(rec, 'r') as f:
             regions = json.load(f)
     except FileNotFoundError:
-        print(f"Rectangle coordinates file not found: {rec}")
+        # print(f"Rectangle coordinates file not found: {rec}")
         return {'roi_statistics': [], 'detected_objects': []}
 
     # Create list of ROIs
@@ -409,7 +412,7 @@ def s_tire():
         with open(depth_path, 'r') as f:
             config = json.load(f)
     except FileNotFoundError:
-        print(f"Depth config file not found: {depth_path}")
+        # print(f"Depth config file not found: {depth_path}")
         return {'roi_statistics': [], 'detected_objects': []}
         
     y_pixel = float(config.get("y_pixel", 0.32))
@@ -420,48 +423,60 @@ def s_tire():
 
     # --- Load depth array ---
     try:
+        arr_time=time.time()
         arr = np.load(raw_data_path)
+        # print("arr time",time.time()-arr_time)
     except FileNotFoundError:
-        print(f"Raw data file not found: {raw_data_path}")
+        # print(f"Raw data file not found: {raw_data_path}")
+        
         return {'roi_statistics': [], 'detected_objects': []}
         
-    data = arr.copy()
+    # data = arr.copy()
 
     # --- Resolution ---
     x_resolution = 0.07805483  # mm/pixel
     y_resolution = y_pixel     # mm/pixel
-
+    
+    
+    algorith_time=time.time()
     # --- Mask values outside valid range ---
+    t0 = time.time()
     filtered_arr = np.where((arr > maxrange) | (arr < minrange), 0, arr)
     non_zero_values = filtered_arr[filtered_arr != 0]
+    # print("Masking time:", time.time() - t0)
     if non_zero_values.size > 0:
         min_val = np.min(non_zero_values)
     else:
-        print("No values in range.")
+        # print("No values in range.")
         return {'roi_statistics': [], 'detected_objects': []}
 
     # --- Binary Threshold ---
-    binary_image = np.where(data > dprange, 255, 0).astype(np.uint8)
-    kernel = np.ones((3, 3), np.uint8)
-    binary_cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, kernel, iterations=2)
+   
+    binary_image = np.where(non_zero_values > dprange, 255, 0).astype(np.uint8)
+    t0 = time.time()
+    # kernel = np.ones((3, 3), np.uint8)
+    # binary_cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, kernel, iterations=1)
+    # print("Binary + Morph time:", time.time() - t0)
 
     # --- Find contours ---
-    contours, _ = cv2.findContours(binary_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+    t0 = time.time()
+    contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # print("FindContours time:", time.time() - t0)
     # Load the RGB image for visualization
+    t0 = time.time()
     try:
         image = cv2.imread(image_path)
         if image is None:
-            print(f"Error: Could not load image: {image_path}")
+            # print(f"Error: Could not load image: {image_path}")
             return {'roi_statistics': [], 'detected_objects': []}
     except Exception as e:
-        print(f"Error loading image: {e}")
+        # print(f"Error loading image: {e}")
         return {'roi_statistics': [], 'detected_objects': []}
-
+    # print("Image load time:", time.time() - t0)
     # Tolerance logic for dprange
     tolerance = filter_value
-    lower_bound = dprange - tolerance
-    upper_bound = dprange + tolerance
+    # lower_bound = dprange - tolerance
+    # upper_bound = dprange + tolerance
 
     # Process each ROI
     roi_stats = []
@@ -469,41 +484,75 @@ def s_tire():
     img_height, img_width = image.shape[:2]
 
     for index, roi in enumerate(rois):
+        t_roi = time.time()
         x_min, y_min = roi['x_min'], roi['y_min']
         x_max, y_max = roi['x_max'], roi['y_max']
-        
+        # print(f"ROI {index} - Extract time:", time.time() - t0)
         # Draw ROI boundaries
         cv2.line(image, (x_min, 0), (x_min, img_height), (255, 0, 0), 3)
         cv2.line(image, (x_max, 0), (x_max, img_height), (255, 0, 0), 3)
         
         # Extract ROI from depth image
+        t0 = time.time()
         roi_depth = arr[y_min:y_max, x_min:x_max].copy()
-        
+        # print(f"ROI {index} - Extract time:", time.time() - t0)
+
+        t0 = time.time()
         # Apply min-max range: mask out-of-range values to 0
         roi_depth[(roi_depth < minrange) | (roi_depth > maxrange)] = 0
         depth_value = np.where((roi_depth == 0) | (np.isnan(roi_depth)) | (np.isinf(roi_depth)), np.nan, roi_depth)
-
+        # print(f"ROI {index} - Extract time:", time.time() - t0)
         # Apply filter
+        
         filter_type = "median"
-        kernel_size = 5
-        sigma = 1
-
+        kernel_size = 10
+        sigma = 5
+        t0 = time.time()
         if filter_type == "median":
-            depth_filtered = median_filter(np.nan_to_num(depth_value), size=kernel_size)
+            depth_filtered = median_filter(np.nan_to_num(depth_value, nan=0), size=kernel_size)
         elif filter_type == "gaussian":
-            depth_filtered = gaussian_filter(np.nan_to_num(depth_value), sigma=sigma)
+            depth_filtered = gaussian_filter(np.nan_to_num(depth_value, nan=0), sigma=sigma)
         else:
             depth_filtered = depth_value
-
-        # Find min & max
-        min_val_filtered = np.nanmin(depth_filtered)
-        max_val_filtered = np.nanmax(depth_filtered)
+        # print(f"ROI {index} - Filtering time:", time.time() - t0)
+        # # Find min & max
+        # min_val_filtered = np.nanmin(depth_filtered)
+        # max_val_filtered = np.nanmax(depth_filtered)
+        # print("min_val",min_val_filtered)
+        # print("Max_value",max_val_filtered)
+        # min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
+        # max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
+       
+        # Correct_value = max_val_filtered - min_val_filtered
+        # print("correct value",Correct_value)
+        # Convert back to NaN where original invalid values were
         
-        min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
-        max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
-
-        Correct_value = max_val_filtered - min_val_filtered
         
+        # depth_filtered = np.where(depth_value == np.nan, np.nan, depth_filtered)
+        # depth_filtered[depth_value == np.nan] = np.nan  # ensure mask applied
+
+        # Ignore 0s also after filtering
+        t0 = time.time()
+        depth_filtered[depth_filtered == 0] = np.nan
+        # print(f"ROI {index} - Extract time:", time.time() - t0)
+        # Find min & max (ignoring NaNs and 0s)
+        t0 = time.time()
+        if np.all(np.isnan(depth_filtered)):
+            print("No valid depth values in ROI")
+        else:
+            min_val_filtered = np.nanmin(depth_filtered)                                                                                             
+            max_val_filtered = np.nanmax(depth_filtered)
+
+            # print("Min_val:", min_val_filtered)
+            # print("Max_val:", max_val_filtered)
+
+            min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
+            max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
+
+            Correct_value = max_val_filtered - min_val_filtered
+            # print("Correct value:", Correct_value)
+        # print(f"ROI {index} - Extract time:", time.time() - t0)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+        # print("Algorithm tiem",time.time()-algorith_time)
         # Process original ROI data for tolerance checking
         roi_non_zero = roi_depth[roi_depth != 0]
         if roi_non_zero.size > 0:
@@ -546,10 +595,10 @@ def s_tire():
             )
             
             # Draw circles at min and max points
-            cv2.circle(image, min_point, 5, (0, 255, 0), -1)
-            cv2.circle(image, min_point, 2, (255, 255, 255), -1)
-            cv2.circle(image, max_point, 5, (255, 0, 0), -1)
-            cv2.circle(image, max_point, 2, (255, 255, 255), -1)
+            # cv2.circle(image, min_point, 5, (0, 255, 0), -1)
+            # cv2.circle(image, min_point, 2, (255, 255, 255), -1)
+            # cv2.circle(image, max_point, 5, (255, 0, 0), -1)
+            # cv2.circle(image, max_point, 2, (255, 255, 255), -1)
             
             stats = {
                 'name': roi['name'],
@@ -617,15 +666,15 @@ def s_tire():
             "depth": round(float(depth_val), 2)
         }
         results.append(result_data)
-
+    # print("main time",time.time()-function_time)
     # --- Save outputs with proper paths ---
     marked_outliers_path = os.path.join(media_root, 'captured', 'two', 'marked_outliers.png')
     # rotated_boxes_path = os.path.join(media_root, 'captured', 'two', 'rotated_bounding_boxes.png')
     results_summary_path = os.path.join(media_root, 'results_summary.json')
-    
     os.makedirs(os.path.dirname(marked_outliers_path), exist_ok=True)
-    
+    image_time=time.time()
     cv2.imwrite(marked_outliers_path, image)
+    # print("save time",time.time()-image_time)
     # cv2.imwrite(rotated_boxes_path, image)
     
     with open(results_summary_path, "w") as f:
@@ -639,3 +688,4 @@ def s_tire():
         'detected_objects': results,
         'processing_time': time.time()  # You can calculate actual processing time if needed
     }
+    

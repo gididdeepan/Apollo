@@ -1,120 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet"> <!-- Google Font -->
-  <title>Apollo</title>
-  <link rel="stylesheet" href="./static/csss/vision.css"> <!-- Link to separate CSS file -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apollo Vision System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/csss/vision.css">
+  <link rel="icon" type="image/png" sizes="42x42" href="../static/img/LOGO_ERL-removebg-preview (2) 2 (1).png">
 {% csrf_token %}
 
+</head>
 <body>
   <nav class="navbar">
     <div class="navbar-left">
       <img src="./static/img/erlwhite.png" alt="Logo" class="logo-icon">
       <span class="app-name">ERL Vision</span>
     </div>
+  
     <div class="menu">
-      {% comment %} <div class="dropdown">
-        <a href="#" class="nav-link"><i class="fas fa-folder"></i> File</a>
-        <div class="dropdown-content">
-          <a href="#" onclick="handleSource('live')"><i class="fas fa-broadcast-tower"></i> Live</a>
-          <a href="#" onclick="document.getElementById('uploadInput').click()"><i class="fas fa-upload"></i> External</a>
-        </div>
-      </div> {% endcomment %}
+      
+  
       <!-- Hidden file input for external upload -->
       <button class="save-btn" onclick="saveImage()"><i class="fas fa-save"></i> Save</button>
       <button class="save-btn" onclick="window.location.href='/monitor/'"><i class="fas fa-desktop"></i> Monitor</button>
     </div>
   </nav>
-  <div class="rectangle-box_1">
-    <div class="row-box">
-      <div class="parameter">
-        <img src="./static/img/layers.png" alt="Icon" class="icon-image">
-        Parameter Editor
-        <select id="Setting" class="text-select4" onchange="toggleCardView()">
-          <option value="acu">Acquisition Setting</option>
-          <option value="use">Trigger Setting</option>
+<div class="container-fluid py-2">
+  <div class="row g-3">
+
+    <!-- LEFT PANEL -->
+    <div class="col-12 col-lg-3">
+      <div class="section-header">
+        <span><i class="fa-solid fa-sliders "></i> Parameter Editor</span>
+        <select id="Setting"  class="form-select form-select-sm " onchange="toggleCardView()">
+          <option value="acu">Acquisition</option>
+          <option value="trg">Trigger</option>
         </select>
       </div>
-    </div>
-  </div>
-  <!-- CARD VIEW 1: Acquisition Setting -->
-  <div class="card-row" id="card-acquisition">
-    <div class="card card-left">
-      <h4 class="section-title-top">Acquisition Control</h4>
-  
-      <div class="form-row">
-        <label for="Frameselect" class="label4">Acquisition Mode</label>
-        <select id="Frameselect" class="text-select1">
-          <option value="SingleFrame">SingleFrame</option>
-          <option value="Continuous">Continuous</option>
-        </select>
-        <label for="Stopmode" class="label">Acquisition Stop Mode</label>
-        <select id="Stopmode" class="text-select2">
-          <option value="Complete">Complete</option>
-          <option value="Immediate">Immediate</option>
-        </select>
+
+      <!-- Acquisition Card -->
+      <div id="card-acquisition" class="card p-2">
+        <h4 class="section-title-top "><i class="fa-solid fa-camera text-white"></i> Acquisition Control</h4>
+        <div class="form-row">
+          <label  for="Frameselect" class="label">Mode</label>
+          <select id="Frameselect" class="form-select form-select-sm">
+            <option value="SingleFrame">SingleFrame</option>
+            <option value="Continuous">Continuous</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="Stopmode"  class="label">Stop Mode</label>
+          <select id="Stopmode" class="form-select form-select-sm">
+            <option value="Complete">Complete</option>
+            <option value="Immediate">Immediate</option>
+          </select>
+        </div>
+
+        <h4 class="section-title-top"><i class="fa-solid fa-bolt text-white"></i> Laser Profile Extraction</h4>
+        <div class="form-row">
+          <label for="exposureTime" class="label">Exposure Time</label>
+          <input type="number"  id="Exposuretime" class="form-control form-control-sm" value="100" placeholder="min: 12 max: 832">
+        </div>
+        <div class="form-row">
+          <label for="threshold" class="label">Threshold</label>
+          <input type="number" id="Threshold"  class="form-control form-control-sm" value="10" placeholder="min: 12 max: 832">
+        </div>
+        <div class="form-row">
+          <label for="advance" class="label">Advance</label>
+          <select id="Advance" class="form-select form-select-sm">
+            <option value="Off">Off</option>
+            <option value="PresetSoft">Preset Soft</option>
+            <option value="PresetMedium">Preset Medium</option>
+            <option value="PresetAggressive">Preset Aggressive</option>
+          </select>
+        </div>
+
+        <h4 class="section-title-top"><i class="fa-solid fa-cube text-white"></i> 3D Image Format</h4>
+        <div class="form-row">
+          <label for="profilesPerImage" class="label">Profiles Per Image</label>
+          <input type="number" id= "Profile" class="form-control form-control-sm" value="2000" placeholder="min: 12 max: 832">
+        </div>
       </div>
-  
-      <h4 class="section-title-top2">Laser Profile Extraction</h4>
-      <div class="form-row">
-        <label class="label">Exposure Time</label>
-        <input type="number" id="Exposuretime" class="text-input1" value="100" placeholder="min: 12 max: 832">
-      </div>
-      <div class="form-row">
-        <label class="label">Detection Threshold</label>
-        <input type="text" id="Threshold" class="text-input2" value="10" placeholder="min: 12 max: 832">
-      </div>
-      <div class="form-row">
-        <label class="label">Advance</label>
-        <select id="Advance" class="text-select3">
-          <option value="Off">off</option>
-          <option value="PresetSoft">Preset Soft</option>
-          <option value="PresetMedium">Preset Meduim</option>
-          <option value="PresetAggressive">Preset Aggressive</option>
-        </select>
-      </div>
-  
-      <h4 class="section-title-top3">3D Image Format</h4>
-      <div class="form-row">
-        <label class="label">Height</label> 
-        <input type="text" id= "Profile" class="text-input3" value="2000" placeholder="min: 12 max: 832">
-      </div>
-      
-    </div>
-  </div>
-  
-  <!-- CARD VIEW 2: Trigger Setting -->
-  <div class="card-row" id="card-trigger" style="display: none;">
-    <div class="card card-left">
-      <h4 class="section-title-top">Free Runnig </h4>
-      <div class="form-row">
-        <label class="label">Timed Profile Rate (Hz)</label>
-        <input type="text" id ="Timedrate" class="text-input5" value="1024" placeholder="min: 12 max: 832">
-      </div>
-      <h4 class="section-title-top">Encoder </h4>
-     <div class="form-row">
-        <label class="label">Encoder Mode</label>
-        <label class="switch">
-          <input type="checkbox" id="EncoderModeToggle">
-          <span class="slider round"></span>
-          <span class="state-label off">OFF</span>
-        </label>
-      </div>
-          
-      <div class="form-row">
-        <label class="label">Encoder Resolution (mm/pulse)</label>
-        <input type="text" id ="Encoderresolution" class="text-input6" value="1000" placeholder="min: 12 max: 832">
-      </div>
-      <div class="form-row">
-        <label class="label">Pulse Per Profile </label>
-        <input type="text" id ="Pulseper" class="text-input7" value="1000" placeholder="min: 12 max: 832">
-      </div>
-      <div class="form-row">
+
+      <!-- Trigger Card -->
+      <div id="card-trigger" class="card p-3" style="display:none;">
+        <h4 class="section-title-top mt-0"><i class="fa-solid fa-play text-white"></i> Free Running</h4>
+        <div class="form-row">
+          <label for="timedRate" class="label">Timed Profile Rate (Hz)</label>
+          <input type="number" id ="Timedrate" class="form-control form-control-sm" value="1024" placeholder="min: 12 max: 832">
+        </div>
+        <h4 class="section-title-top"><i class="fa-solid fa-cogs text-white"></i> Encoder</h4>
+        <div class="form-row">
+          <label class="label">Encoder Mode</label>
+          <label class="switch">
+            <input type="checkbox" id="EncoderModeToggle">
+            <span class="slider round"></span>
+            <span class="state-label off">OFF</span>
+          </label>
+        </div>
+        <div class="form-row">
+          <label  class="label">Encoder Resolution (mm/pulse)</label>
+          <input type="text" id ="Encoderresolution" class="form-control form-control-sm"  value="1000" placeholder="min: 12 max: 832">
+        </div>
+        <div class="form-row">
+          <label  class="label">Pulse Per Profile</label>
+          <input type="text" id ="Pulseper" class="form-control form-control-sm" value="1000" placeholder="min: 12 max: 832">
+        </div>
+        <div class="form-row">
         <label class="label">Image Trigger</label>
         <select id="ImageTriggerSelect" class="text-select6">
           <option value="Positionup">Position Up</option>
@@ -124,267 +118,246 @@
           <option value="Motion">Motion</option>
         </select>
       </div>
-      <h4 class="section-title-top4">Image Triggering</h4>
+        <h4 class="mt-3 section-title-top"><i class="fa-solid fa-bolt text-white"></i> Image Triggering</h4>
       <div class="form-row">
-        <label class="label">Trigger Mode</label>
-        <label class="switch3">
-          <input type="checkbox" id="TriggerModeToggle">
-          <span class="slider round"></span>
+        <label  class="label">Trigger Mode</label>
+        <label class="switch">
+        <input type="checkbox"  id="TriggerModeToggle">
+        <span class="slider round"></span>
           <span class="state-label off">OFF</span>
         </label>
       </div>
       <div class="form-row">
-        <label class="label">Image Trigger</label>
-        <select id="External_trigger" class="text-select3">
+        <label  class="label">Image Trigger</label>
+        <select  id="External_trigger" class="form-select form-select-sm">
           <option value="RisingEdge">Rising Edge</option>
-          <option value="Levelhigh">Level High</option>
+          <option value="LevelHigh">Level High</option>
         </select>
       </div>
-      <!-- Add more settings if needed -->
-    </div>
-  </div>
-  <div class="card card-right">
-    <div id="loadingOverlay" style="
-      display: none;
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 10;
-      justify-content: center;
-      align-items: center;
-  ">
-      <img src="/static/pattern-18044.gif" alt="Loading..." style="width: 80px;">
-  </div>
-      <div id="imageContainer">
-        <img id="image" src="{{ MEDIA_URL }}captured/two/ERL_refl.png"  alt="Zoomable" />
       </div>
-  </div>
-{% comment %}  {% endcomment %}
-  <div class="card-row2">
-    <div class="card-container2">
-      <div class="rectangle-box_2">
-  <div class="config2">
-    <img src="./static/img/2d.png" alt="Icon"  class="icon-image"> Regions configuration 
-    {% comment %} <input type="checkbox" class="corner-checkbox" id="config2dCheckbox"> {% endcomment %}
-  </div>
-    
-        </div>
-       
-        <div class="card card-left_bottom">
-          <div class="scrollable-container">
-            <h4 class="section-title-top">Componets</h4>
-        
-            <!-- Component Selection -->
-            <div class="mb-1 inner-box">
-              <label for="component_select" class="label1">Select:</label>
-              <select id="component_select" class="component-dropdown" name="component_select">
-                <option value="job1">Component 1</option>
-                <option value="job2">Component 2</option>
-                <option value="job3">Component 3</option>
-              </select>
-            </div>
-        
-            <!-- Depth Config -->
-             <h4 class="section-title-top"> Region Value </h4>
-            <div class="form-row depth-config">
-              <label class="region-label">Min</label>
-              <input type="number" id="minrange"  value="101"
-              step="0.01" placeholder="12.0 to 832.0" class="config-input">
-              <label class="region-label">Max</label>
-              <input type="number" id="maxrange" value="103"
-              step="0.01" placeholder="12.0 to 832.0" class="config-input">
-              <label class="region-label">Tolerance</label>
-              <input type="number" id="filter"  value="0.5"
-              step="0.5" placeholder="0.5" class="config-input">
-            </div>
-            <h4 class="section-title-top"> Draw region </h4>
-            <!-- Regions Table -->
-            <div class="regions-block">
-              <div class="regions-header">
-                <div>Region</div>
-                <div>Depth Value</div>
-                <div>Draw</div>
-                <div>Set</div>
-                <div>Edit</div>
-                <div>Delete</div>
-              </div>
-        
-              <!-- Regions 1–10 -->
-              <div class="region-row">
-                <span class="region-label">Reg-1</span>
-                <input type="number"  id="Region_1_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" id="editBtn" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-2</span>
-                <input type="number" id="Region_2_Tolernce"  value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec2" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn2" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn2"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec2"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-3</span>
-                <input type="number"  id="Region_3_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec3" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn3" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn3"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec3"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-4</span>
-                <input type="number"  id="Region_4_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button" id="drawrec4" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button" id="setBtn4" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn4"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec4"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-5</span>
-                <input type="number" id="Region_5_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec5" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn5" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn5"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec5"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-6</span>
-                <input type="number" id="Region_6_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec6" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn6" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn6"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec6"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-7</span>
-                <input type="number" id="Region_7_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec7" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn7" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn7"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec7"><i class="fa-solid fa-trash"></i></button>
-              </div>
-        
-              <div class="region-row">
-                <span class="region-label">Reg-8</span>
-                <input type="number"  id="Region_8_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec8" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button  type="button"  id="setBtn8" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn8"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec8"><i class="fa-solid fa-trash"></i></button>
-              </div>
-              <div class="region-row">
-                <span class="region-label">Reg-9</span>
-                <input type="number"  id="Region_9_Tolernce"  value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec9" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn9" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn9"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec9"><i class="fa-solid fa-trash"></i></button>
-              </div>
-              <div class="region-row">
-                <span class="region-label">Reg-10</span>
-                <input type="number"  id="Region_10_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input">
-                <button type="button"  id="drawrec10" class="btn green"><i class="fa-solid fa-pen-ruler"></i> Draw</button>
-                <button type="button"  id="setBtn10" class="btn blue"><i class="fa-solid fa-check"></i> Set</button>
-                <button class="btn orange" title="Edit" id="editBtn10"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn red" title="Delete" id="deleterec10"><i class="fa-solid fa-trash"></i></button>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-    <!-- Right Card 1 with Rectangle -->
-    <div class="card-container2">
-      <div class="rectangle-box_3">
-        <div class="config3">
-          <img src="./static/img/model-cube-arrows.png" alt="Icon"  class="icon-image">Output configuration
-          {% comment %} <input type="checkbox" class="corner-checkbox2" id="config3dCheckbox"></div> {% endcomment %}
-      </div>
-      <div class="card card-right_bottom">
-        <div class="scrollable-container">
-          <!-- <div class="form-row">
-            <h4 class="section-title-bottom" style="display: flex; align-items: center;">
-              Job Selection 
-            </h4>
-            
-          </div>
-         -->
-        <!-- <div class="mb-1 inner-box">
-        <label for="job_select" class="label1">Job Selection:</label>
-        <select id="job_select" class="component-dropdown"name="job_select">
-          <option value="Component1">Job 1</option>
-          <option value="Component2">job 2</option>
-          <option value="Component3">job 3</option>
-        </select>
-        </div> -->
-        <div class="form-row">
-            <h4 class="section-title-bottom" style="display: flex; align-items: center;">
-              Tcp ip Config
-            </h4>
-          </div>
-        
-        <div class="config-row">
-          <div class="config-label">Receiver IP</div>
-          <input id="receiver-ip" type="text" class="form-control config-input" value="127.0.0.1">
-          <div class="config-label">Port</div>
-          <input id="receiver-port" type="text" class="form-control config-port" value="8888">
-        </div>
 
-        <!-- Sender -->
-        <div class="config-row">
-          <div class="config-label">Sender IP</div>
-          <input id="sender-ip" type="text" class="form-control config-input" value="127.0.0.1">
-          <div class="config-label">Port</div>
-          <input id="sender-port" type="text" class="form-control config-port" value="8888">
-        </div>
-        {% comment %} <div class="form-row">
-          <label class="label">Margin :</label>
-          <input type="text" id ="margin" class="text-input14" value="10" placeholder="min: 12 max: 832">
-        </div> {% endcomment %}
-      </div>
-      </div>
-    </div>
-    <!-- Right Card 2 with Rectangle (new card) -->
-    
-    <div class="card-container2">
+      <!-- Extra Trigger Settings -->
       
-      <div class="active1">
-        <button id="runScriptButton" class="btn btn-flash" onclick="sendCoordinates()">
-          <i class="fas fa-bolt"></i> Flash
-        </button>
-        <button id="start" class="btn btn-start">
-          <i class="fas fa-play"></i> Start
-        </button>
-        <button id="stop" class="btn btn-stop">
-          <i class="fas fa-stop"></i> Stop
-        </button>
+    
+      <!-- Regions -->
+      <div class="section-header ">
+        <span><i class="fa-solid fa-border-all"></i> Regions Configuration</span>
+        {% comment %} <input type="checkbox" class="corner-checkbox" id="config2dCheckbox"> {% endcomment %}
       </div>
-      <div class="rectangle-box_5">
-        <div id="coords" class="coords-text">
-          X: 0, Y: 0, Z: 0
+      <div class="card reg-card p-2">
+        <h4 class="section-title-top"><i class="fa-solid fa-shapes text-white"></i>Component</h4>
+        <div class="form-row">
+          <label for="component_select" class="label">Select</label>
+          <select id="component_select" class="form-select form-select-sm" name="component_select">
+            <option value="job1">Component 1</option>
+            <option value="job2">Component 2</option>
+            <option value="job3">Component 3</option>
+          </select>
         </div>
-      </div>
-      <div class="rectangle-box_4">
-        <div class="Result">
-          <img src="./static/img/medical-result.png" alt="Icon"  class="icon-image">Result
+        <h4 class="section-title-top"><i class="fa-solid fa-shapes text-white"></i> Depth value </h4>
+        <div class="form-row depth-config">
+          <label class="region-label">Min</label>
+          <input type="number" id="minrange"  value="101"
+          step="0.01" placeholder="12.0 to 832.0" class="config-input">
+          <label class="region-label">Max</label>
+          <input type="number" id="maxrange" value="103"
+          step="0.01" placeholder="12.0 to 832.0" class="config-input">
+          <label class="region-label">Tolerance</label>
+          <input type="number" id="filter"  value="0.5"
+          step="0.5" placeholder="0.5" class="config-input">
         </div>
-      </div>
-      <div class="card card-right_bottom_2">  
-        <div class="scrollable-container2" id="resultsContainer">
-            <!-- Results will appear here -->
+        
+<!-- Regions Table -->
+<div class="regions-block">
+  <!-- Header Row -->
+  <h4 class="section-title-top"><i class="fa-solid fa-shapes text-white"></i> Regions</h4>
+  <div class="region-row header-row">
+    <span class="header-cell">Region</span>
+    <span class="header-cell">Depth value</span>
+    <span class="header-cell">Draw</span>
+    <span class="header-cell">Set</span>
+    <span class="header-cell">Edit</span>
+    <span class="header-cell">Del</span>
+  </div>
+        <!-- Example Regions -->
+        <div class="region-row">
+          <span>Reg-1</span>
+          <input type="number"  id="Region_1_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-2</span>
+          <input type="number"  id="Region_2_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec2" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn2" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn2" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec2" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-3</span>
+          <input type="number"  id="Region_3_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec3" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn3" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn3" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec3" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-4</span>
+          <input type="number"  id="Region_4_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec4" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn4" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn4" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec4" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-5</span>
+          <input type="number"  id="Region_5_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec5" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn5" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn5" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec5" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-6</span>
+          <input type="number"  id="Region_6_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec6" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn6" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn6" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec6" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-7</span>
+          <input type="number"  id="Region_7_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec7" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn7" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn7" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec7" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-8</span>
+          <input type="number"  id="Region_8_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec8" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn8" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn8" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec8" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-9</span>
+          <input type="number"  id="Region_9_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec9" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn9" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn9" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec9" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <div class="region-row">
+          <span>Reg-10</span>
+          <input type="number"  id="Region_10_Tolernce" value="1" step="0.01" placeholder="12.0 to 832.0" class="region-input form-control form-control-sm" >
+          <button type="button"  id="drawrec10" class="btn btn-success btn-sm"><i class="fa-solid fa-draw-polygon"></i> Draw</button>
+          <button type="button"  id="setBtn10" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Set</button>
+          <button  id="editBtn10" title="Edit" class="btn btn-warning btn-sm text-white"><i class="fa-solid fa-pen"></i></button>
+          <button  title="Delete" id="deleterec10" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
         </div>
       </div>
     </div>
 </div>
+    <!-- RIGHT PANEL -->
+    <div class="col-12 col-lg-9">
+      <div class=" mb-3">
+          <div class="">
+          <div id="imageContainer">
+            <div id="loadingOverlay" style="
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        ">
+            <img src="/static/pattern-18044.gif" alt="Loading..." style="width: 80px;">
+        </div>
+            <img id="image" src="{{ MEDIA_URL }}captured/two/ERL_refl.png"  alt="Zoomable" />
+          </div>
+      </div>
+    {% comment %}  {% endcomment %}
+      </div>
+     <!-- Row for Coordinates and Buttons -->
+  <div class="row mb-3">
+    <!-- Buttons Column (Right 50%) -->
+    <div class="d-flex justify-content-end gap-2 w-100">
+      <button id="runScriptButton" class="btn btn-flash" onclick="sendCoordinates()">
+        <i class="fas fa-bolt"></i> Flash
+      </button>
+      <button id="start" class="btn btn-start">
+        <i class="fas fa-play"></i> Start
+      </button>
+      <button id="stop" class="btn btn-stop">
+        <i class="fas fa-stop"></i> Stop
+      </button>
+    </div>
+    
+  </div>
+
+      
+      <div class="row g-3 d-flex align-items-start flex-wrap">
+        <div class="col-md-4 d-flex flex-column "style="margin-top:-40px;">
+          <!-- Coordinates Display -->
+          <div class="section-header-1"><i class="fa-solid fa-network-wired"></i> Output Configuration
+            {% comment %} <input type="checkbox" class="corner-checkbox2" id="config3dCheckbox"></div> {% endcomment %}
+          </div>
+          <div class="card p-3 flex-grow-1" style="height: 250px;">
+            <!-- <h4>Job Selection</h4>
+            <select id="job_select" class="form-select form-select-sm">
+              <option value="Component1">Job 1</option>
+              <option value="Component2">Job 2</option>
+              <option value="Component3">Job 3</option>
+            </select> -->
+            <h4 class=" section-title-top">TCP/IP</h4>
+            <div class="form-row">
+              <label class="small-label">Receiver IP</label>
+              <input type="text" id="receiver-ip" class="form-control small-input" value="127.0.0.1">
+              <label class="small-label">Port</label>
+              <input type="text"  id="receiver-port" class="form-control small-input" value="8888">
+            </div>
+            <div class="form-row">
+              <label class="small-label">Sender IP</label>
+              <input type="text"  id="sender-ip" class="form-control small-input" value="127.0.0.1">
+              <label class="small-label">Port</label>
+              <input type="text"  id="sender-port" class="form-control small-input" value="6543">
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="col-12 col-md-8 d-flex flex-column">
+          <div class="card-container2 flex-grow-1">
+           <!-- Coordinates Column (Left 50%) -->
+    <div class=" rectangle-box_5  d-flex align-items-center mb-2">
+      <div id="coords" class="coords-text">
+        X: 0, Y: 0, Z: 0
+      </div>
+    </div>
+         <!-- Result Section -->
+            <div >
+              <div class="section-header-1 ">
+                <i class="fa-solid fa-list"></i> Result
+              </div>
+              <div class="card p-3 ">
+                <div class="scrollable-container2" style="height:140px;" id="resultsContainer">
+                  Results will appear here...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
 <script>
   document.getElementById('deleterec').addEventListener('click', () => deleteRectangle('rect1'));
 document.getElementById('deleterec2').addEventListener('click', () => deleteRectangle('rect2'));
@@ -694,7 +667,6 @@ document.addEventListener("DOMContentLoaded", function() {
     persistInput(`Region_${i}_Tolernce`);
   }
 </script>
-
 <script>
   {% comment %} tab navigation script {% endcomment %}
   function toggleCardView() {
@@ -729,9 +701,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const image = document.getElementById("image");
   
       if (source === "live") {
-        image.src = "./static/captured/two/ERL_refl - Copy.png";
+        image.src = "{{ MEDIA_URL }}captured/two/ERL_refl.png" ;
       }
-  
       if (source === "external") {
         const input = document.getElementById("uploadInput");
         const file = input.files[0];
@@ -759,18 +730,17 @@ document.addEventListener("DOMContentLoaded", function() {
         stopMode: document.getElementById("Stopmode").value,
         exposureTime: document.getElementById("Exposuretime").value,
         threshold: document.getElementById("Threshold").value,
-        advance: document.getElementById("Advance").value,
+        Advance: document.getElementById("Advance").value,
         profilePerImage: document.getElementById("Profile").value,
-        imageTrigger: document.querySelectorAll(".text-select3")[1].value,
+        imageTrigger: document.getElementById("ImageTriggerSelect").value,
         timedRate: document.getElementById("Timedrate").value,
-
         External_trigger: document.getElementById("External_trigger").value,
         encoderResolution: document.getElementById("Encoderresolution").value,
         pulsePerProfile: document.getElementById("Pulseper").value,
         triggerType: document.querySelector(".text-select6").value,
         encoderMode: document.getElementById("EncoderModeToggle").checked ? "On" : "Off",
         triggerMode: document.getElementById("TriggerModeToggle").checked ? "On" : "Off",
-        //job_component: document.getElementById("job_select").value,//
+      //  job_component: document.getElementById("job_select").value,
         receiver_ip: document.getElementById("receiver-ip").value,
         receiver_port: document.getElementById("receiver-port").value,
         sender_ip: document.getElementById("sender-ip").value,
@@ -869,8 +839,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
   let selectedFileName = "default";
-
-  
  function sendCoordinates() {
     document.getElementById("loadingOverlay").style.display = "flex";
     const resultsContainer = document.getElementById("resultsContainer");
@@ -964,13 +932,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             // Add processing time if available
-          
             
             resultsContainer.innerHTML = resultsHTML;
             alert("Data saved successfully!");
             // Refresh the image if needed
             const image = document.getElementById('image');
             image.src = `./media/captured/two/marked_outliers.png?t=${new Date().getTime()}`;
+            
         } else {
             alert("Error: " + (data.message || "Unknown error"));
         }
@@ -1022,7 +990,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //C:\github\measurement-3d\scratch\static\cordord16.json
     //static/captured/mes/cordord16.json
     fetch('/media/cordord18.json?v=' + Date.now())
-   // fetch('../static/cordord18.json?v=' + Date.now())
       .then(response => response.json())
       .then(data => {
         zData = data;
@@ -1593,5 +1560,5 @@ makeInteractive(drawBox, currentDrawButton);
 
 </script>
 
-</body> 
+</body>
 </html>

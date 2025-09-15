@@ -26,7 +26,7 @@ urlpatterns = [
     path("start-process/", views.start_process, name="start-process"),
     path('vision-input',home,name="home"),
     path('vision-anlalysis/',page,name='page'),
-
+    
     path("monitor/", views.monitor_view, name="monitor"),
     path("api/job_summary/", views.job_summary_api, name="job_summary_api"),
 

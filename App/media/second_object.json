@@ -1,0 +1,63 @@
+{
+    "rectangle1": {
+        "topLeft": {
+            "x": 863,
+            "y": 2402
+        },
+        "topRight": {
+            "x": 1061,
+            "y": 2402
+        },
+        "bottomLeft": {
+            "x": 863,
+            "y": 2633
+        },
+        "bottomRight": {
+            "x": 1061,
+            "y": 2633
+        }
+    },
+    "rectangle2": {
+        "topLeft": {
+            "x": 1160,
+            "y": 2494
+        },
+        "topRight": {
+            "x": 1361,
+            "y": 2494
+        },
+        "bottomLeft": {
+            "x": 1160,
+            "y": 2801
+        },
+        "bottomRight": {
+            "x": 1361,
+            "y": 2801
+        }
+    },
+    "rectangle3": {
+        "topLeft": {
+            "x": 1457,
+            "y": 2432
+        },
+        "topRight": {
+            "x": 1628,
+            "y": 2432
+        },
+        "bottomLeft": {
+            "x": 1457,
+            "y": 2775
+        },
+        "bottomRight": {
+            "x": 1628,
+            "y": 2775
+        }
+    },
+    "rectangle4": null,
+    "rectangle5": null,
+    "rectangle6": null,
+    "rectangle7": null,
+    "rectangle8": null,
+    "rectangle9": null,
+    "rectangle10": null
+}

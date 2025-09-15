@@ -502,12 +502,12 @@ def c_tire(count_value, client_socket, arr, value):
         return []
 
     # --- Binary Threshold ---
-    binary_image = np.where(data > dprange, 255, 0).astype(np.uint8)
-    kernel = np.ones((3, 3), np.uint8)
-    binary_cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, kernel, iterations=2)
+    binary_image = np.where(non_zero_values > dprange, 255, 0).astype(np.uint8)
+    # kernel = np.ones((3, 3), np.uint8)
+    # binary_cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, kernel, iterations=2)
 
     # --- Find contours ---
-    contours, _ = cv2.findContours(binary_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # --- Load the RGB image from media root ---
     image_path = os.path.join(media_root, 'captured', 'two', 'ERL_refl.png')
@@ -562,28 +562,56 @@ def c_tire(count_value, client_socket, arr, value):
 
         # Extract ROI from depth image
         roi_depth = arr[y_min:y_max, x_min:x_max].copy()
+        
+        # Apply min-max range: mask out-of-range values to 0
+        roi_depth[(roi_depth < minrange) | (roi_depth > maxrange)] = 0
         depth_value = np.where((roi_depth == 0) | (np.isnan(roi_depth)) | (np.isinf(roi_depth)), np.nan, roi_depth)
 
+        # Apply filter
+        
         filter_type = "median"
-        kernel_size = 5
-        sigma = 1
-
-        # Noise filtering
+        kernel_size = 10
+        sigma = 5
+ 
         if filter_type == "median":
-            depth_filtered = median_filter(np.nan_to_num(depth_value), size=kernel_size)
+            depth_filtered = median_filter(np.nan_to_num(depth_value, nan=0), size=kernel_size)
         elif filter_type == "gaussian":
-            depth_filtered = gaussian_filter(np.nan_to_num(depth_value), sigma=sigma)
+            depth_filtered = gaussian_filter(np.nan_to_num(depth_value, nan=0), sigma=sigma)
         else:
             depth_filtered = depth_value
 
-        # Find min & max
-        min_val = np.nanmin(depth_filtered)
-        max_val = np.nanmax(depth_filtered)
-        
-        min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
-        max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
+        # # Find min & max
+        # min_val_filtered = np.nanmin(depth_filtered)
+        # max_val_filtered = np.nanmax(depth_filtered)
+        # print("min_val",min_val_filtered)
+        # print("Max_value",max_val_filtered)
+        # min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
+        # max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
+       
+        # Correct_value = max_val_filtered - min_val_filtered
+        # print("correct value",Correct_value)
+        # Convert back to NaN where original invalid values were
+        depth_filtered = np.where(depth_value == np.nan, np.nan, depth_filtered)
+        depth_filtered[depth_value == np.nan] = np.nan  # ensure mask applied
 
-        Correct_value = max_val - min_val
+        # Ignore 0s also after filtering
+        depth_filtered[depth_filtered == 0] = np.nan
+
+        # Find min & max (ignoring NaNs and 0s)
+        if np.all(np.isnan(depth_filtered)):
+            print("No valid depth values in ROI")
+        else:
+            min_val_filtered = np.nanmin(depth_filtered)
+            max_val_filtered = np.nanmax(depth_filtered)
+
+            # print("Min_val:", min_val_filtered)
+            # print("Max_val:", max_val_filtered)
+
+            min_coords = np.unravel_index(np.nanargmin(depth_filtered), depth_filtered.shape)
+            max_coords = np.unravel_index(np.nanargmax(depth_filtered), depth_filtered.shape)
+
+            Correct_value = max_val_filtered - min_val_filtered
+            # print("Correct value:", Correct_value)
         
         roi_depth[(roi_depth < minrange) | (roi_depth > maxrange)] = 0
         

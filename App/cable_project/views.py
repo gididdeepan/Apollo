@@ -275,7 +275,7 @@
 #         "live_time": now().strftime("%Y-%m-%d %H:%M:%S")  
 #     })
 
-
+import time
 from django.shortcuts import render
 from harvest import main
 from django.http import JsonResponse
@@ -290,7 +290,7 @@ from mac_id import c
 import os 
 from django.conf import settings
 from django.utils.timezone import now
-
+# from object_dtection import caterpillar
 @csrf_exempt
 def login(request):
     try:
@@ -305,14 +305,13 @@ def login(request):
 def start_process(request):
     if request.method != "POST":
         return JsonResponse({"error": "Only POST requests allowed"}, status=405)
-
     try:
         data = json.loads(request.body)
         Frame = data.get('acquisitionMode')
         stopMode = data.get('stopMode')
         exposureTime = data.get('exposureTime')
         threshold = data.get('threshold')
-        advance = data.get('advance')
+        advance = data.get('Advance')
         profilePerImage = data.get('profilePerImage')
         RisingEdge = data.get('External_trigger')
         timedRate = data.get('timedRate')
@@ -340,6 +339,9 @@ def start_process(request):
         print("Sender IP:", sender_ip, "Port:", sender_port)
         
         try:
+            # print(Frame, stopMode, exposureTime, threshold, advance, profilePerImage, RisingEdge,
+            #      timedRate, encoderResolution, pulsePerProfile, triggerType, encoder_mode, 
+            #      trigger_mode, sender_ip, sender_port, receiver_ip, receiver_port)
             main(Frame, stopMode, exposureTime, threshold, advance, profilePerImage, RisingEdge,
                  timedRate, encoderResolution, pulsePerProfile, triggerType, encoder_mode, 
                  trigger_mode, sender_ip, sender_port, receiver_ip, receiver_port)
@@ -475,9 +477,11 @@ def save_corners(request):
                 json.dump(rectangle_data, f, indent=4)
             with open(depth_config_path, 'w') as f:
                 json.dump(depth_config, f, indent=4)
-            print("go to single tire")
-            
+            # print("go to single tire")
+            # caterpillar()
+            star_single=time.time()
             results = s_tire()
+            print(time.time()-star_single)
             # print("succesfullly")
             range_values = {}
             for i, rect in enumerate(results.get('roi_statistics', [])):
@@ -519,7 +523,7 @@ def job_summary_api(request):
         "OK": 0,
         "FAIL": 0
     }
-
+    
     if os.path.exists(summary_file):
         try:
             with open(summary_file, "r") as f:
@@ -535,3 +539,10 @@ def job_summary_api(request):
         "job_summary": job_summary,
         "live_time": now().strftime("%Y-%m-%d %H:%M:%S")  
     })
+    
+    
+    
+    
+    
+    
+    
